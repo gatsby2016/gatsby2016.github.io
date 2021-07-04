@@ -1,0 +1,1000 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="数据增强,颜色标准化,Caffe," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="有点标题党啊
+引言这两天是终于挺过来了。本来周日那天老徐说，周三鼓楼医院那边有人带队过来，让我做前列腺图像做点结果出来，于是我就抓紧做啊抓紧做，忙个小半shi，终于到今天，能跑出个样子了。可是，人家下午已经来过了。而且，老徐似乎也没那么重视了。虽然这样，还是挺值得的。为了实现一个目标或者说一个目的，心无旁骛地去做，遇到问题就问师兄或者去百度搜索解决。回过头来想想，之前觉得做不到的那些也就没那么难了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三日实战caffe和matlab">
+<meta property="og:url" content="http://www.cyyan.cn/2018/03/28/三日实战caffe及matlab/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="有点标题党啊
+引言这两天是终于挺过来了。本来周日那天老徐说，周三鼓楼医院那边有人带队过来，让我做前列腺图像做点结果出来，于是我就抓紧做啊抓紧做，忙个小半shi，终于到今天，能跑出个样子了。可是，人家下午已经来过了。而且，老徐似乎也没那么重视了。虽然这样，还是挺值得的。为了实现一个目标或者说一个目的，心无旁骛地去做，遇到问题就问师兄或者去百度搜索解决。回过头来想想，之前觉得做不到的那些也就没那么难了">
+<meta property="og:updated_time" content="2021-07-04T03:23:54.036Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="三日实战caffe和matlab">
+<meta name="twitter:description" content="有点标题党啊
+引言这两天是终于挺过来了。本来周日那天老徐说，周三鼓楼医院那边有人带队过来，让我做前列腺图像做点结果出来，于是我就抓紧做啊抓紧做，忙个小半shi，终于到今天，能跑出个样子了。可是，人家下午已经来过了。而且，老徐似乎也没那么重视了。虽然这样，还是挺值得的。为了实现一个目标或者说一个目的，心无旁骛地去做，遇到问题就问师兄或者去百度搜索解决。回过头来想想，之前觉得做不到的那些也就没那么难了">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.cyyan.cn/2018/03/28/三日实战caffe及matlab/"/>
+
+
+
+
+
+  <title> 三日实战caffe和matlab | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.cyyan.cn/2018/03/28/三日实战caffe及matlab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                三日实战caffe和matlab
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-28T13:47:03+00:00">
+                2018-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Matlab/" itemprop="url" rel="index">
+                    <span itemprop="name">Matlab</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>有点标题党啊</strong></p>
+<h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>这两天是终于挺过来了。本来周日那天老徐说，周三鼓楼医院那边有人带队过来，让我做前列腺图像做点结果出来，于是我就抓紧做啊抓紧做，忙个小半shi，终于到今天，能跑出个样子了。可是，人家下午已经来过了。而且，老徐似乎也没那么重视了。虽然这样，还是挺值得的。为了实现一个目标或者说一个目的，心无旁骛地去做，遇到问题就问师兄或者去百度搜索解决。回过头来想想，之前觉得做不到的那些也就没那么难了，反而感谢老徐，逼了我一把，否则，caffe我可能始终不知道怎么弄，matlab可能始终连矩阵都写不出来。 同时，这里也非常感谢嘉伟师兄，蔡师兄，明建大师兄，马师兄……感谢他们不厌其烦地指导我。尤其是嘉伟师兄，几乎我不会的问题，我都去请教他了。太感谢了！另外，感谢我的爸爸妈妈……我的女朋友，以及……等等，还没到高光表现呢，这会怎么要感动而泣了………</p>
+<h3 id="第一天-3-26"><a href="#第一天-3-26" class="headerlink" title="第一天(3.26)"></a>第一天(3.26)</h3><p>最开始我觉得老徐给我的前列腺数据各个级是不多的，后来经过多次筛查决定先做G3和G4的分期，这样数据量多一些。于是我拿upenn的数据集来做，做医生标记区域的取块，<a href="http://yanng.cc/2018/03/26/ubuntu%E4%B8%8Amatlab%E5%AE%89%E8%A3%85openslide%E5%8C%85/" target="_blank" rel="external"><strong>matlab安装openslide</strong></a>，是第一个坑。后面又读xml文件，反反复复几乎是搞了一天，结果好不容易取块取好了，才发现更大的问题，从xml文件标记中取块时，是不分标记笔颜色的，也就是说，我用红色标记和用绿色标记在同一张xml文件中，读出来是在同一类的，所以，这个坑，就一直在搞，到现在，也还没解决，明天正好有时间，可以填坑了！<a href="http://yanng.cc/2018/03/28/Matlab%E4%B8%AD%E6%A0%B9%E6%8D%AExml%E6%96%87%E4%BB%B6%E4%B8%8D%E5%90%8Cannotation%E9%A2%9C%E8%89%B2%E8%AF%BBregion/" target="_blank" rel="external"><strong>Matlab中根据xml文件不同annotation颜色读region</strong></a><br>晚上蔡师兄回来，给我说，可以先做良性和恶性的分类，后面有更多数据了可以再做分级。于是，我就找到了之前的xcf文件，保存原图，然后准备取块做两类数据集。</p>
+<h3 id="第二天-3-27"><a href="#第二天-3-27" class="headerlink" title="第二天(3.27)"></a>第二天(3.27)</h3><p>第二天我又开始准备做数据了，这次是gimp的xcf文件，先是将那些有标注的点掉，然后只保存原图，花了大半个小时做好原图保存。然后准备从图中取块，按理说取块是不难的，但是我又是检查数据尺寸又是考虑边缘处理的，结果一上午没搞好。下午接着弄，终于读出来了，然后两类数据有点差别大啊，一类10000多张，一类才3000多，所以需要做数据增强，问嘉伟师兄，师兄把github上代码给我看，专门做<a href="https://github.com/aleju/imgaug" target="_blank" rel="external"><strong>数据增强</strong></a>。我看了看，python代码，要是之前我肯定拿过来就用了，但是我当时用惯了matlab，所以就没用那个，到网上找matlab数据增强方法，没找到合适的，但是仔细一想，简单一点的数据增强也不过就是镜像啊旋转啊这些的，应该是足够了。所以我就直接拿matlab的<code>imrotate()</code>做旋转，一张秒变四张，后面又加了镜像，上下镜像和左右镜像，其实也比较简单，形如<code>B=A(end:-1:1,:,:)</code>这样就是做了上下镜像，等等。<br>数据增强这里做好之后，数据集基本就算做好了，然后我是二话没说，良性没分上皮和间质，直接送进去训练，关于在caffe上训练alexnet，后面我会试着写一点内容。方便后面再用到的时候方便一点。<br>训练到晚上loss不变我以为是哪里没做好，大师兄说是数据没做筛选，后来啊，我也就是硬着头皮试了，开始有选择地区分上皮和间质，打算先做这两类的分类，后面再慢慢扩充到格里森分级等等。</p>
+<h3 id="第三天-3-28"><a href="#第三天-3-28" class="headerlink" title="第三天(3.28)"></a>第三天(3.28)</h3><p>这一天上午挑了好多数据，把上皮区域里间质比较明显的都delete，间质区域有腺体的同样delete，删完之后一看，我的天，2500多张只剩1700了，还得做数据增强，但是这次在做数据增强之前，我开始考虑大师兄昨天说的颜色标准化，的确，在间质这一类中，由于数据不是一个地方的，所以染色差异很大，准备做数据增强，嘉伟给了我一个早期的颜色标准化代码，说很慢我也就没用，直接到海俊师兄那找博客，正好是我之前看到的那篇论文，拿过来直接做<a href="https://github.com/mitkovetta/staining-normalization" target="_blank" rel="external"><strong>颜色标准化</strong></a>。然后在做数据增强，数据集做好之后，拿进去训练，loss还是0.7左右，这时候数据集是没问题的，两类差别很大而且我也筛选过了，于是我开始怀疑是这个模型问题，或者做caffe的lmdb文件时哪里出了问题。晚上经过一番调调打打，终于，发现，是alexnet模型拿错了，用了vgg，换过来之后，再次训练，loss就降低很大了，这个时候，基本工作就算完成了。后续就是测试评估以及整理了！</p>
+<h3 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h3><p>这个工作暂时算做点成果了，后面需要再测试评估以及流程整理，同时能够整理多篇博客，包括matlab,caffe,数据增强,读xml等等。加油。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据增强/" rel="tag"># 数据增强</a>
+          
+            <a href="/tags/颜色标准化/" rel="tag"># 颜色标准化</a>
+          
+            <a href="/tags/Caffe/" rel="tag"># Caffe</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/26/ubuntu上matlab安装openslide包/" rel="next" title="ubuntu上matlab安装openslide包">
+                <i class="fa fa-chevron-left"></i> ubuntu上matlab安装openslide包
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/01/Python使用matplotlib的pyplot包/" rel="prev" title="Python使用matplotlib的pyplot包">
+                Python使用matplotlib的pyplot包 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">64</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">42</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一天-3-26"><span class="nav-number">2.</span> <span class="nav-text">第一天(3.26)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二天-3-27"><span class="nav-number">3.</span> <span class="nav-text">第二天(3.27)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三天-3-28"><span class="nav-number">4.</span> <span class="nav-text">第三天(3.28)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#展望"><span class="nav-number">5.</span> <span class="nav-text">展望</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://orcid.org/0000-0003-2061-6040" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">0000-0003-2061-6040</a>
+</div>
+
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>
