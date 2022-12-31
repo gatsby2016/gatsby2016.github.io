@@ -1,0 +1,1017 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="BeautyGlow 损失优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Life isn’t perfect, but your makeup can be.
+
+这几天帮朋友看个BeautyGlow的代码。感觉挺有意思，就把论文看了下，里面定义的损失函数蛮丰富的，也许有机会可以参考一下，所以这里记录一下。
+
+该工作提出的模型框架如图所示。想要的目标就是把参考图像中脸上的妆容迁移到目标图像中的脸上。因此输入是一个有妆容的参考图像和一个没有妆容的目标图像，输出是有妆容的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BeautyGlow论文的一点笔记">
+<meta property="og:url" content="http://blog.cyyan.cn/2020/02/26/BeautyGlow论文的一点笔记/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="Life isn’t perfect, but your makeup can be.
+
+这几天帮朋友看个BeautyGlow的代码。感觉挺有意思，就把论文看了下，里面定义的损失函数蛮丰富的，也许有机会可以参考一下，所以这里记录一下。
+
+该工作提出的模型框架如图所示。想要的目标就是把参考图像中脸上的妆容迁移到目标图像中的脸上。因此输入是一个有妆容的参考图像和一个没有妆容的目标图像，输出是有妆容的">
+<meta property="og:image" content="http://blog.cyyan.cn/download/beautyglow/fig1.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BeautyGlow论文的一点笔记">
+<meta name="twitter:description" content="Life isn’t perfect, but your makeup can be.
+
+这几天帮朋友看个BeautyGlow的代码。感觉挺有意思，就把论文看了下，里面定义的损失函数蛮丰富的，也许有机会可以参考一下，所以这里记录一下。
+
+该工作提出的模型框架如图所示。想要的目标就是把参考图像中脸上的妆容迁移到目标图像中的脸上。因此输入是一个有妆容的参考图像和一个没有妆容的目标图像，输出是有妆容的">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/beautyglow/fig1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2020/02/26/BeautyGlow论文的一点笔记/"/>
+
+
+
+
+
+  <title> BeautyGlow论文的一点笔记 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2020/02/26/BeautyGlow论文的一点笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                BeautyGlow论文的一点笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-26T08:49:52+00:00">
+                2020-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index">
+                    <span itemprop="name">Paper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Life isn’t perfect, but your makeup can be.</p>
+</blockquote>
+<p>这几天帮朋友看个BeautyGlow的代码。感觉挺有意思，就把论文看了下，里面定义的损失函数蛮丰富的，也许有机会可以参考一下，所以这里记录一下。</p>
+<p><img src="/download/beautyglow/fig1.png" alt="fig1"></p>
+<p>该工作提出的模型框架如图所示。想要的目标就是把参考图像中脸上的妆容迁移到目标图像中的脸上。因此输入是一个有妆容的参考图像和一个没有妆容的目标图像，输出是有妆容的目标图像（生成的）。中间的思路就是用glow模型（生成式流模型）得到各自的隐空间latent vectors；然后分别将隐空间分解为脸部facial特征和妆容makeup特征；再将参考图像的妆容makeup特征和目标图像的脸部facial特征相加得到有妆容的目标图像的隐空间；最后再用glow模型反变换为有妆容的RGB目标图像。</p>
+<p>思路很合理，但是仔细一想，其实最重要的就是如何将脸部特征和妆容特征分解开来，以及如何将脸部特征和妆容特征进行组合？<br>作者这里最基本的假设就是隐空间只由facial和makeup特征加法组成。因此这里对隐空间$L$用了一个线性映射的权重$W$来变换得到facial特征$F$，那么剩下的部分就是makeup特征$M$，也就是:</p>
+<script type="math/tex; mode=display">M=L-F=L-WL=(I-W)L</script><p>后面组合的思路也和分解一样，直接相加即可。</p>
+<p>那么问题来了，权重$W$如何得到？很简单的思路就是，送到网络里去学习啊。那么这就牵扯到优化目标，应该关注、优化什么才能让权重$W$将隐空间分为facial和makeup特征，继而让$L_{s}^{Y}$更好，最终得到<strong>有妆容的RGB目标图像</strong>。很显然，我们可以直接优化<strong>有妆容的RGB目标图像</strong>。但是事实上，一旦前面的glow模型确定，我们的glow反变换也就确定了。因此，我们只需要优化$L_{s}^{Y}$。但是仔细一想，这东西没有监督，所以我们只能通过对自身特征的约束来优化$W$去验证（或者说满足）假设。所以下面来介绍这些约束，也就是文中的目标函数：</p>
+<ol>
+<li><p><strong>针对$L_{s}^{Y}$的循环一致性损失</strong>。得到的目标是有妆容的，那么我们可以再对$L_{s}^{Y}$用权重$W$提取facial特征和makeup特征。理想情况，这两个特征应该是分别与$F_{s}^{X}$和$M_{r}^{Y}$一致的。</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{c y c}=\left\|L_{s}^{Y} W-F_{s}^{X}\right\|_{2}+\left\|L_{s}^{Y}(I-W)-M_{r}^{Y}\right\|_{2}</script></li>
+<li><p><strong>针对$F_{s}^{X}$的感知损失</strong>。因为目标图像一开始是没有妆容的，所以理想情况，$F_{s}^{X}$不就是$L_{s}^{X}$本身么？</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{p}=\left\|F_{s}^{X}-L_{s}^{X}\right\|_{2}</script></li>
+<li><p><strong>针对$M_{r}^{Y}$的妆容损失</strong>。我们把有妆容图像和无妆容图像的集合看成是两个域。那么整体上，两个域之间其实是一个包含被包含的关系，只差妆容这一部分。因此，我们可以用有妆容图像的隐空间集合的均值和无妆容图像的隐空间集合的均值量化表示这两个域。两个域的差来近似表示每一个有妆容图像的makeup特征。</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{m}=\left\|M_{r}^{Y}-\left(\bar{L}^{Y}-\bar{L}^{X}\right)\right\|_{2}</script></li>
+<li><p><strong>针对$F_{r}^{Y}$和$L_{s}^{Y}$的域内损失</strong>。我们优化的目标无非就是$L_{s}^{Y}$，但是它是$F_{s}^{X}$以及$M_{r}^{Y}两个部分的和，而这两个部分又有各自的补。因此，还是可以从域这个角度下手，毕竟域内关系和域间关系是老生常谈的问题。而这两个域又是包含被包含的关系，所以很好定义。对于有妆容图像，去掉妆容其实就处于没有妆容的域；对于没有妆容图像，加上妆容其实就处于有妆容的域。</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{intra}=\left\|F_{r}^{Y}-\bar{L}^{X}\right\|_{2}+\left\|L_{s}^{Y}-\bar{L}^{Y}\right\|_{2}</script></li>
+<li><p><strong>针对$F_{r}^{Y}$和$L_{s}^{Y}$的域间损失</strong>。既然希望域内损失更小，就希望域间损失更大。这里用了个相似度度量</p>
+<script type="math/tex; mode=display">
+\operatorname{sim}(A, B)=\frac{\operatorname{sum}(A \otimes B)}{|A||B|}</script><p>$\otimes$表示逐元素乘；$|\cdot|$表示向量的模。（这其实就是余弦相似度度量；两向量从0到180度间变化，余弦值从1到-1越来越小；这样两个域就越远。正好对应下面定义的损失中的常数$1$）</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{\text {inter}}=\left(1+\operatorname{Sim}\left(F_{r}^{Y}, \bar{L}^{Y}\right)\right)+\left(1+\operatorname{Sim}\left(L_{s}^{Y}, \bar{L}^{X}\right)\right)</script></li>
+</ol>
+<p>值得注意的是，论文中这里的几个损失的加权和的权重值如下，$\lambda_{inter}$值相比十分巨大。也许不是因为只有$inter$损失有用，而且度量标准不一样。<br>$\lambda_{p} = 0.01,\lambda_{cyc} = 0.001,\lambda_{m} = 0.1,\lambda_{intra} = 0.1,\lambda_{inter} = 1000$</p>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>论文中定义的几个损失的确蛮有意思的，无监督方法里对多个特征进行约束，尤其含有域关系的约束。<br>另外，文中introduction中还提到MSPM，单model多style怎么做。即：一个模型可以transfer多个styles，通过调整instance Normalization layers。有机会再看。</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="http://openaccess.thecvf.com/content_CVPR_2019/papers/Chen_BeautyGlow_On-Demand_Makeup_Transfer_Framework_With_Reversible_Generative_Network_CVPR_2019_paper.pdf" target="_blank" rel="external">BeautyGlow原文地址</a><br><a href="https://arxiv.org/abs/1807.03039v1" target="_blank" rel="external">Glow文章地址</a><br><a href="https://arxiv.org/pdf/1605.08803.pdf" target="_blank" rel="external">RealNVP文章地址</a><br><a href="https://openai.com/blog/glow/" target="_blank" rel="external">OpenAI对Glow模型的讲解</a><br><a href="https://kexue.fm/archives/5807" target="_blank" rel="external">细水长flow之RealNVP与Glow：流模型的传承与升华</a><br><a href="https://kexue.fm/archives/5776" target="_blank" rel="external">细水长flow之NICE：流模型的基本概念与实现</a><br><a href="https://blog.csdn.net/daydayjump/article/details/85041564" target="_blank" rel="external">CSDN论文笔记（五）DENSITY ESTIMATION USING REAL NVP</a><br><a href="https://blog.csdn.net/struggling_orange/article/details/83272276" target="_blank" rel="external">CSDN 论文阅读笔记 Glow:Generative Flow with Invertible 1*1 Convolutions</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/BeautyGlow-损失优化/" rel="tag"># BeautyGlow 损失优化</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/25/pytorch的反向传播及求导机制相关/" rel="next" title="pytorch的反向传播及求导机制相关">
+                <i class="fa fa-chevron-left"></i> pytorch的反向传播及求导机制相关
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/22/如何上百倍加速病理图像的全扫描层面预测/" rel="prev" title="如何上百倍加速病理图像的全扫描层面预测">
+                如何上百倍加速病理图像的全扫描层面预测 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#写在最后"><span class="nav-number">1.</span> <span class="nav-text">写在最后</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">1.1.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

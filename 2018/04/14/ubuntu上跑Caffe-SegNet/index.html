@@ -1,0 +1,1000 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="segnet," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="引言本文记录一下用caffe-segnet训练的过程。虽然现在结果还没出来，但是我已经预感得差不多了，是的，结果不是很好…  (写在测试时，结果还ok啊！)注意:在segnet分割网络中， 注意你的mask一定是uint8型，(0,255)值中的0代表第一类，1代表第二类，2代表第三类…等等。 而不能用logical二值，是会出问题的！
+前期准备
+根据自己的cudnn版本确定安装好caffe-se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu上跑Caffe-SegNet">
+<meta property="og:url" content="http://blog.cyyan.cn/2018/04/14/ubuntu上跑Caffe-SegNet/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="引言本文记录一下用caffe-segnet训练的过程。虽然现在结果还没出来，但是我已经预感得差不多了，是的，结果不是很好…  (写在测试时，结果还ok啊！)注意:在segnet分割网络中， 注意你的mask一定是uint8型，(0,255)值中的0代表第一类，1代表第二类，2代表第三类…等等。 而不能用logical二值，是会出问题的！
+前期准备
+根据自己的cudnn版本确定安装好caffe-se">
+<meta property="og:image" content="http://blog.cyyan.cn/download/method.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ubuntu上跑Caffe-SegNet">
+<meta name="twitter:description" content="引言本文记录一下用caffe-segnet训练的过程。虽然现在结果还没出来，但是我已经预感得差不多了，是的，结果不是很好…  (写在测试时，结果还ok啊！)注意:在segnet分割网络中， 注意你的mask一定是uint8型，(0,255)值中的0代表第一类，1代表第二类，2代表第三类…等等。 而不能用logical二值，是会出问题的！
+前期准备
+根据自己的cudnn版本确定安装好caffe-se">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/method.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2018/04/14/ubuntu上跑Caffe-SegNet/"/>
+
+
+
+
+
+  <title> ubuntu上跑Caffe-SegNet | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2018/04/14/ubuntu上跑Caffe-SegNet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ubuntu上跑Caffe-SegNet
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-14T07:22:38+00:00">
+                2018-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Caffe/" itemprop="url" rel="index">
+                    <span itemprop="name">Caffe</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>本文记录一下用caffe-segnet训练的过程。虽然现在结果还没出来，但是我已经预感得差不多了，是的，结果不是很好…  (写在测试时，结果还ok啊！)<br><strong>注意:在segnet分割网络中， 注意你的mask一定是uint8型，(0,255)值中的0代表第一类，1代表第二类，2代表第三类…等等。 而不能用logical二值，是会出问题的！</strong></p>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ul>
+<li>根据自己的cudnn版本确定安装好caffe-segnet版本</li>
+<li>到github上下载<a href="https://github.com/alexgkendall/SegNet-Tutorial" target="_blank" rel="external">SegNet-Tutorial文件</a></li>
+<li>自己数据集，以<code>train</code>和<code>test</code>以及<code>train_mask,test_mask</code>形式存放于对应文件夹(我这里是自己做的数据集，搞了一周才把前列腺穿刺数据中的腺体画出来取块并做好了mask)</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="http://mi.eng.cam.ac.uk/projects/segnet/tutorial.html" target="_blank" rel="external">SegNet官方教程</a></li>
+<li><a href="https://blog.csdn.net/caicai2526/article/details/77169871" target="_blank" rel="external">我师兄的两篇博客</a></li>
+</ul>
+<h3 id="第一步，制作数据集"><a href="#第一步，制作数据集" class="headerlink" title="第一步，制作数据集"></a>第一步，制作数据集</h3><p>这一部分基本没有什么干货，主要就是谈一下心路历程。其实搞大数据啊深度学习计算这些，有两种路子，一个是算法开发模型设计，这时候对基础要求高，需要自己设计网络设计算法等等，但是对数据集要求不高，只要拿通用的数据集测试算法性能即可；另一个路子就是拿自己的数据集在别人先进的算法上做，也就是走的应用路线；这时候，自己能根据自己项目的需求、问题，选择合适的算法并制作筛选合适的数据集就相当重要。其实，这个时候，数据集怎么做，做得怎么样，就至关重要了，因为基本上先进的算法都是经过在通用数据集上评估的。anyway, 不管走什么路线，都是要付出心血去做的。不然搞什么都不行。<br>好吧好吧，跑偏了。说一下，训练和测试数据做好之后，需要做一个train.txt和test.txt甚至val.txt，这个就不多说了，主要就是要保证在训练时网络能寻找到对应每张图像的mask。 因为原图和mask是在不同文件夹的。<br>另外我有个个人建议，每张图mask的名称和原图保持一致，只仅仅多个<code>_mask</code>后缀。如：<code>15019_1_1.png</code>和<code>15019_1_1_mask.png</code>。<br><strong>有一点需要注意是，在matlab中保存二值logical图像数据只能以png格式保存</strong></p>
+<h3 id="第二步，更改prototxt文件"><a href="#第二步，更改prototxt文件" class="headerlink" title="第二步，更改prototxt文件"></a>第二步，更改prototxt文件</h3><p>首先更改<code>segnet_train.prototxt</code>和<code>segnet_inference.prototxt</code>中的<code>source:</code>后面的<code>train.txt及test.txt</code>文件位置，改为自己的存放位置；<br>然后更改这两个文件中最后位置的<code>num_output=11</code>为自己的类别，如<code>num_output=2</code>，其中11和2表示了自己的分割类别；同时更改<code>segnet_train.prototxt</code>中的<code>ignore_label=11</code>为2,<code>ignore_label=2</code>下方的class_weighting在第三步有讲解；<br>再然后，更改两个文件中的<code>upsample_w</code>和<code>upsample_h</code>为自己训练图片的尺寸对应的当时大小；如我的训练图像为200x200，而例程是480x360， 所以需要将原来的30,23改为13,13,原来的60,45改为25,25。两个文件中都有需要改的地方，总共是2x2x2个位置需要修改,注意这里一定要改的；<br>最后，修改<code>segnet_solver.prototxt</code>的<code>net</code>位置和<code>snapshot_prefix</code>位置，可自行参考注释，不再赘言；包括是采用gpu还是cpu跑网络，都可以在这里更改。</p>
+<h3 id="第三步，更改class-weighting值"><a href="#第三步，更改class-weighting值" class="headerlink" title="第三步，更改class_weighting值"></a>第三步，更改class_weighting值</h3><p>在segnet_train.prototxt文件中，拉到最后，会有形如<code>class_weighting</code>的11个值，表示了所有类别各自占比；可以按如下代码计算自己数据集中不同类别的比重，并更改其中的值，其他的可以注释掉。<br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%% below is used for calculating the class weighting when i run the segnet. CHECK the variable 'total'</span></div><div class="line">clear;</div><div class="line">clc;</div><div class="line">tic;</div><div class="line"></div><div class="line">Path=<span class="string">'/home/yann/SegNet/Data/train_mask/'</span>;</div><div class="line">files=dir(Path);</div><div class="line"></div><div class="line"><span class="keyword">for</span> k=<span class="number">3</span>:<span class="built_in">length</span>(files)</div><div class="line">    subpath=[Path,files(k).name];</div><div class="line">    name=files(k).name;</div><div class="line">    image=imread(subpath);</div><div class="line">    I=image;</div><div class="line">    img = I;</div><div class="line">    label_num=double(unique(image));</div><div class="line">    element(:,<span class="number">1</span>)=[<span class="number">0</span>;<span class="number">1</span>];   <span class="comment">% 2class 3class is [0;1;2]</span></div><div class="line">    <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="built_in">length</span>(label_num)</div><div class="line">        a=label_num(<span class="built_in">j</span>);</div><div class="line">        e=<span class="built_in">length</span>(<span class="built_in">find</span>(img==a));</div><div class="line">        element(<span class="built_in">j</span>,k<span class="number">-1</span>)=e;</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line">num=element(:,<span class="number">2</span>:<span class="keyword">end</span>);</div><div class="line">sum_num=sum(num,<span class="number">2</span>);</div><div class="line">median=sum(sum_num)/<span class="built_in">length</span>(sum_num);</div><div class="line">class_weighting_=median./sum_num;</div><div class="line">total=[element(:,<span class="number">1</span>), class_weighting_];</div><div class="line"></div><div class="line">toc;</div></pre></td></tr></table></figure></p>
+<h3 id="第四步，开始训练"><a href="#第四步，开始训练" class="headerlink" title="第四步，开始训练"></a>第四步，开始训练</h3><p>在开始训练前，如果希望很快收敛，可以采用ImageNet训练的VGG模型参数来初始化segnet模型参数，下载放到<code>SegNet/Models/</code>下：<br><a href="http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel" target="_blank" rel="external">VGG_ILSVRC_16_layers模型参数</a><br><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="comment">#/home/yann/SegNet/caffe-segnet/build/tools/caffe train -gpu 0 -solver ./Models/segnet_solver.prototxt  # This will begin training SegNet on GPU 0</span></div><div class="line"><span class="comment">#/home/yann/SegNet/caffe-segnet/build/tools/caffe train -gpu 0 -solver ./Models/segnet_basic_solver.prototxt  # This will begin training SegNet-Basic on GPU 0</span></div><div class="line">/home/yann/SegNet/caffe-segnet/build/tools/caffe train -gpu 0 -solver ./Models/segnet_solver.prototxt -weights ./Models/VGG_ILSVRC_16_layers.caffemodel 2&gt;&amp;1|tee ./Log/result.log  <span class="comment"># This will begin training SegNet on GPU 0 with a pretrained encoder</span></div></pre></td></tr></table></figure></p>
+<p><strong>以上最后一段加上了重定向输出log文件到Log文件夹下</strong></p>
+<h3 id="最后，测试结果"><a href="#最后，测试结果" class="headerlink" title="最后，测试结果"></a>最后，测试结果</h3><p>打开<code>/Scripts/compute_bn_statistics.py</code>和<code>/Scripts/test_segmentation_camvid.py</code>，更改caffe安装目录；<br>运行如下，记得更改为自己的caffemodel，<code>/Inference/</code>用于保存计算到的均值和方差数据的文件夹：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">python compute_bn_statistics.py ../Models/segnet_train.prototxt ../Training/segnet_iter_29000.caffemodel ../Inference/  # compute BN statistics for SegNet</div></pre></td></tr></table></figure></p>
+<p>打开<code>/Scripts/test_segmentation_camvid.py</code>文件，更改<code>11</code>为自己的类别数量，然后可以选择将<code>label_colours</code>的颜色值更改为自己喜欢的颜色。即可。<br>运行如下，将<code>iter</code>后面的数字改成自己测试集的数据数量即可：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">python test_segmentation_camvid.py --model ../Models/segnet_inference.prototxt --weights ../Inference/test_weights.caffemodel --iter 1000  # Test SegNet</div></pre></td></tr></table></figure></p>
+<p>可以看到预测结果了~~<br>后面可以再根据需求，保存预测分割结果或者怎么样，都可以！</p>
+<h3 id="可选，画出loss曲线"><a href="#可选，画出loss曲线" class="headerlink" title="可选，画出loss曲线"></a>可选，画出loss曲线</h3><p>将caffe安装目录下的<code>tools/extra/</code>下的<code>parse_log.sh</code>和<code>extra_seconds.py</code>以及<code>plot_training_log.py.example</code>复制到<code>Log/</code>文件夹下，然后<code>./plot_training_log.py.example 6 loss.png result.log</code>可以看到<code>loss</code>和迭代期的曲线图：如图<br><img src="/download/method.png" alt="loss"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>希望以后自己能独立一点，稳重一点。不要被<code>&#39;恶势力&#39;</code>牵住头脑。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/segnet/" rel="tag"># segnet</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/01/Python使用matplotlib的pyplot包/" rel="next" title="Python使用matplotlib的pyplot包">
+                <i class="fa fa-chevron-left"></i> Python使用matplotlib的pyplot包
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/14/matlab下操作SVM种种/" rel="prev" title="matlab下操作SVM种种">
+                matlab下操作SVM种种 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前期准备"><span class="nav-number">2.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考链接"><span class="nav-number">3.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步，制作数据集"><span class="nav-number">4.</span> <span class="nav-text">第一步，制作数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步，更改prototxt文件"><span class="nav-number">5.</span> <span class="nav-text">第二步，更改prototxt文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步，更改class-weighting值"><span class="nav-number">6.</span> <span class="nav-text">第三步，更改class_weighting值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四步，开始训练"><span class="nav-number">7.</span> <span class="nav-text">第四步，开始训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后，测试结果"><span class="nav-number">8.</span> <span class="nav-text">最后，测试结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选，画出loss曲线"><span class="nav-number">9.</span> <span class="nav-text">可选，画出loss曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">10.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

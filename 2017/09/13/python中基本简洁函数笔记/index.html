@@ -1,0 +1,988 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="高阶函数变量可以指向函数，变量可以作为函数的参数传入，a=b,b=c,so a=c 因此，一个函数可以作为另一个函数的参数传入，这种函数就是高阶函数。&amp;gt;&amp;gt;&amp;gt; def add(x,y,f):...     return f(x) + f(y)... &amp;gt;&amp;gt;&amp;gt; x = 5&amp;gt;&amp;gt;&amp;gt; y = -3&amp;gt;&amp;gt;&amp;gt; add(x,y,abs)8
+map">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python中基本简洁函数笔记">
+<meta property="og:url" content="http://blog.cyyan.cn/2017/09/13/python中基本简洁函数笔记/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="高阶函数变量可以指向函数，变量可以作为函数的参数传入，a=b,b=c,so a=c 因此，一个函数可以作为另一个函数的参数传入，这种函数就是高阶函数。&amp;gt;&amp;gt;&amp;gt; def add(x,y,f):...     return f(x) + f(y)... &amp;gt;&amp;gt;&amp;gt; x = 5&amp;gt;&amp;gt;&amp;gt; y = -3&amp;gt;&amp;gt;&amp;gt; add(x,y,abs)8
+map">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python中基本简洁函数笔记">
+<meta name="twitter:description" content="高阶函数变量可以指向函数，变量可以作为函数的参数传入，a=b,b=c,so a=c 因此，一个函数可以作为另一个函数的参数传入，这种函数就是高阶函数。&amp;gt;&amp;gt;&amp;gt; def add(x,y,f):...     return f(x) + f(y)... &amp;gt;&amp;gt;&amp;gt; x = 5&amp;gt;&amp;gt;&amp;gt; y = -3&amp;gt;&amp;gt;&amp;gt; add(x,y,abs)8
+map">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2017/09/13/python中基本简洁函数笔记/"/>
+
+
+
+
+
+  <title> python中基本简洁函数笔记 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2017/09/13/python中基本简洁函数笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python中基本简洁函数笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-13T10:02:38+00:00">
+                2017-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h3><p>变量可以指向函数，变量可以作为函数的参数传入，<code>a=b,b=c,so a=c</code> 因此，一个函数可以作为另一个函数的参数传入，这种函数就是高阶函数。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x,y,f)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> f(x) + f(y)</div><div class="line"><span class="meta">... </span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = <span class="number">5</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y = <span class="number">-3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>add(x,y,abs)</div><div class="line"><span class="number">8</span></div></pre></td></tr></table></figure></p>
+<h4 id="map函数"><a href="#map函数" class="headerlink" title="map函数"></a><strong>map函数</strong></h4><p>map()函数接收两个参数，第一个参数是函数，第二个参数是序列；执行操作是：将传入的函数应用于序列中每一个元素，结果返回一个list。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>test = [<span class="number">1</span>,<span class="number">-2</span>,<span class="number">3</span>,<span class="number">-4</span>,<span class="number">5</span>,<span class="number">-6</span>,<span class="number">7</span>,<span class="number">-8</span>,<span class="number">9</span>,<span class="number">-10</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>map(abs,test)</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div></pre></td></tr></table></figure></p>
+<p>当需要对某一序列中所有元素进行遍历式的函数操作时，可以使用map()函数。当然也可以使用列表生成式操作：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>[abs(n) <span class="keyword">for</span> n <span class="keyword">in</span> test]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>]</div></pre></td></tr></table></figure></p>
+<h4 id="reduce函数"><a href="#reduce函数" class="headerlink" title="reduce函数"></a><strong>reduce函数</strong></h4><p>reduce()函数和map()一样接收两个分别是函数和序列的参数；但reduce接收的函数需要序列中的两个元素，然后将结果和下一个元素再次作为参数传入函数中进行累积操作，直至元素遍历完。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>test = [<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>reduce(pow,test)</div><div class="line"><span class="number">4096</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>pow(pow(pow(<span class="number">4</span>,<span class="number">3</span>),<span class="number">2</span>),<span class="number">1</span>)</div><div class="line"><span class="number">4096</span></div></pre></td></tr></table></figure></p>
+<p>map()和reduce()都是为了方便快速而应运而生的，毕竟python追求代码简洁高效性；如果用for语句也不是不可以。</p>
+<h4 id="filter函数"><a href="#filter函数" class="headerlink" title="filter函数"></a><strong>filter函数</strong></h4><p>filter()函数和map()一样接收两个参数，第一个为函数，第二个为序列，将函数应用至所有序列，如果返回值为False则删除该元素，返回值为True则保留。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">pos</span><span class="params">(x)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> x&gt;<span class="number">0</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line"><span class="meta">... </span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>test</div><div class="line">[<span class="number">1</span>, <span class="number">-2</span>, <span class="number">3</span>, <span class="number">-4</span>, <span class="number">5</span>, <span class="number">-6</span>, <span class="number">7</span>, <span class="number">-8</span>, <span class="number">9</span>, <span class="number">-10</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>filter(pos,test)</div><div class="line">[<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>]</div></pre></td></tr></table></figure></p>
+<h4 id="sorted函数"><a href="#sorted函数" class="headerlink" title="sorted函数"></a><strong>sorted函数</strong></h4><p>sorted()用于直接对序列进行排序；数字按照数字大小排序；字符串按照首字母的ASCII码大小排列；从小到大；当然，sorted可以传入函数用于更改排序方法；如从大到小或者忽略大小写。其中<code>x.lower()</code> 是将元素x的大写字符全部换为小写；<code>x.upper()</code> 则相反。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = [<span class="string">'a'</span>,<span class="string">'A'</span>,<span class="string">'bab'</span>,<span class="string">'BAB'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>[n.lower() <span class="keyword">for</span> n <span class="keyword">in</span> x]<span class="comment">#全部改变为小写</span></div><div class="line">[<span class="string">'a'</span>, <span class="string">'a'</span>, <span class="string">'bab'</span>, <span class="string">'bab'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>[n.upper() <span class="keyword">for</span> n <span class="keyword">in</span> x]<span class="comment">#全部改变为大写</span></div><div class="line">[<span class="string">'A'</span>, <span class="string">'A'</span>, <span class="string">'BAB'</span>, <span class="string">'BAB'</span>]</div><div class="line">&gt;&gt;&gt;<span class="comment">#以下为对字符串分别进行区分和不区分大小写排序</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = [<span class="string">'a'</span>,<span class="string">'Ba'</span>,<span class="string">'cd'</span>,<span class="string">'E'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(x)</div><div class="line">[<span class="string">'Ba'</span>, <span class="string">'E'</span>, <span class="string">'a'</span>, <span class="string">'cd'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">low</span><span class="params">(x,y)</span>:</span></div><div class="line"><span class="meta">... </span>    x1= x.lower()</div><div class="line"><span class="meta">... </span>    y1= y.lower()</div><div class="line"><span class="meta">... </span>    <span class="keyword">if</span> x1 &lt; y1:</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> <span class="number">-1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">elif</span> x1 &gt; y1:</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> <span class="number">1</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">else</span>:</div><div class="line"><span class="meta">... </span>            <span class="keyword">return</span> <span class="number">0</span></div><div class="line"><span class="meta">... </span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(x,low)</div><div class="line">[<span class="string">'a'</span>, <span class="string">'Ba'</span>, <span class="string">'cd'</span>, <span class="string">'E'</span>]</div><div class="line">&gt;&gt;&gt;<span class="comment"># 因为low函数没有改变输入的元素值，所以只在排序上方式有变化元素未改变</span></div></pre></td></tr></table></figure></p>
+<h4 id="匿名函数lambda"><a href="#匿名函数lambda" class="headerlink" title="匿名函数lambda"></a><strong>匿名函数lambda</strong></h4><p>lambda表示匿名函数，其实lambda还是python为了追求代码简洁性而出的关键字，通过一个关键字lambda，省去了函数定义时需要的函数名以及def和return关键字。不过尽管其简洁，但并不能定义过多表达式，只能定义一个表达式；如：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">function</span><span class="params">(x)</span>:</span></div><div class="line"><span class="meta">... </span>    <span class="keyword">return</span> x*x</div><div class="line"><span class="meta">... </span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>function(<span class="number">5</span>)</div><div class="line"><span class="number">25</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>function = <span class="keyword">lambda</span> x: x*x <span class="comment"># 通过lambda定义一个函数，function变量指向该函数</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>function(<span class="number">5</span>)</div><div class="line"><span class="number">25</span></div></pre></td></tr></table></figure></p>
+<h4 id="偏函数functools-partial"><a href="#偏函数functools-partial" class="headerlink" title="偏函数functools.partial"></a><strong>偏函数functools.partial</strong></h4><p>偏函数实际上就是借助一个module，把某一函数的默认值更改后确定下来从而方便调用，举个例子就很清楚了：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'100'</span>,base=<span class="number">2</span>) <span class="comment">#权为2，2的2次方*1+2的1次方*0+2的0次方*0"""</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'100'</span>,base=<span class="number">4</span>) <span class="comment">#权为4，4的2次方*1+4的1次方*0+4的0次方*0</span></div><div class="line"><span class="number">16</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'100'</span>,base=<span class="number">8</span>) <span class="comment">#权为8，8的2次方*1+8的1次方*0+8的0次方*0</span></div><div class="line"><span class="number">64</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'100'</span>,base=<span class="number">16</span>) <span class="comment">#权为16，16的2次方*1+16的1次方*0+16的0次方*0</span></div><div class="line"><span class="number">256</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>int(<span class="string">'100'</span>,base=<span class="number">10</span>) <span class="comment">#权为10，10的2次方*1+10的1次方*0+10的0次方*0</span></div><div class="line"><span class="number">100</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> functools </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = functools.partial(int,base=<span class="number">16</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a(<span class="string">'100'</span>) <span class="string">"""此时相当于默认值base=16"""</span></div><div class="line"><span class="number">256</span></div></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><strong>一下午系统学习这些函数其实感觉没有太大作用，一般情况这些函数还是很少接触，权当作为学习python过程的必要吧！有时候很多东西只有接触了才知道这个东西好不好哪里好需要花多少时间。听别人说什么什么好什么什么不好，自己永远抓不住关键点。这也就是实践与理论最大的区别啊！学习python的一点感悟。</strong></p>
+<blockquote>
+<p>python学习来自廖雪峰老师 &gt;&gt;&gt;<a href="https://www.liaoxuefeng.com/" target="_blank" rel="external">这里</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/12/python中序列及用户输入/" rel="next" title="python中序列及用户输入">
+                <i class="fa fa-chevron-left"></i> python中序列及用户输入
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/16/python面向对象编程/" rel="prev" title="python面向对象编程">
+                python面向对象编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#高阶函数"><span class="nav-number">1.</span> <span class="nav-text">高阶函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#map函数"><span class="nav-number">1.1.</span> <span class="nav-text">map函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce函数"><span class="nav-number">1.2.</span> <span class="nav-text">reduce函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#filter函数"><span class="nav-number">1.3.</span> <span class="nav-text">filter函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sorted函数"><span class="nav-number">1.4.</span> <span class="nav-text">sorted函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#匿名函数lambda"><span class="nav-number">1.5.</span> <span class="nav-text">匿名函数lambda</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#偏函数functools-partial"><span class="nav-number">1.6.</span> <span class="nav-text">偏函数functools.partial</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

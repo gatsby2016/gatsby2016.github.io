@@ -1,0 +1,978 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="matlab,libsvm," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="直入主题在matlab中，用SVM分类器做二分类问题时，除了准确率，不可避免地需要得到在测试数据上分类结果的auc值，此时我们可以采用matlab自带的函数perfcurve进行，所以我们现在先来看perfcurve的输入输出参数：perfcurve函数功能： 用于实现分类器输出的ROC曲线绘制和对应AUC值计算输入参数：		labels, 测试数据的真实label 如 [0;0;0;0;1;1;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="libsvm与perfcurve">
+<meta property="og:url" content="http://blog.cyyan.cn/2018/11/03/libsvm与perfcurve/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="直入主题在matlab中，用SVM分类器做二分类问题时，除了准确率，不可避免地需要得到在测试数据上分类结果的auc值，此时我们可以采用matlab自带的函数perfcurve进行，所以我们现在先来看perfcurve的输入输出参数：perfcurve函数功能： 用于实现分类器输出的ROC曲线绘制和对应AUC值计算输入参数：		labels, 测试数据的真实label 如 [0;0;0;0;1;1;">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="libsvm与perfcurve">
+<meta name="twitter:description" content="直入主题在matlab中，用SVM分类器做二分类问题时，除了准确率，不可避免地需要得到在测试数据上分类结果的auc值，此时我们可以采用matlab自带的函数perfcurve进行，所以我们现在先来看perfcurve的输入输出参数：perfcurve函数功能： 用于实现分类器输出的ROC曲线绘制和对应AUC值计算输入参数：		labels, 测试数据的真实label 如 [0;0;0;0;1;1;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2018/11/03/libsvm与perfcurve/"/>
+
+
+
+
+
+  <title> libsvm与perfcurve | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2018/11/03/libsvm与perfcurve/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                libsvm与perfcurve
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-03T08:02:23+00:00">
+                2018-11-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Matlab/" itemprop="url" rel="index">
+                    <span itemprop="name">Matlab</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="直入主题"><a href="#直入主题" class="headerlink" title="直入主题"></a>直入主题</h3><p>在matlab中，用SVM分类器做二分类问题时，除了准确率，不可避免地需要得到在测试数据上分类结果的auc值，此时我们可以采用matlab自带的函数<code>perfcurve</code>进行，所以我们现在先来看<code>perfcurve</code>的输入输出参数：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">perfcurve函数功能： 用于实现分类器输出的ROC曲线绘制和对应AUC值计算</div><div class="line">输入参数：	</div><div class="line">	labels, 测试数据的真实label 如 [0;0;0;0;1;1;1;1;1;1]  10*1列向量</div><div class="line">	scores, 由分类器得到的以正样本列的预测概率 如分类器将样本预测为1的概率 [0.1; 0.2; 0.21; 0.12;...]  10*1列向量</div><div class="line">	posclass, 正样本类label 如 这里的 1</div><div class="line">输出参数：	</div><div class="line">	X, 用于绘制ROC曲线的x轴坐标 </div><div class="line">	Y, 用于...的y轴坐标</div><div class="line">	T, 计算X Y时采用的各个阈值</div><div class="line">	AUC, ROC曲线下的AUC值</div><div class="line">	...</div></pre></td></tr></table></figure></p>
+<p>好，现在应用<code>perfcurve</code>，我们发现，我们通过matlab自带的<code>svm</code>分类器预测得到的直接是assignment label，而非概率值。<br>为了得到预测概率值，此时，我们需要换用<code>libsvm</code>下的<code>libsvmtrain</code>和<code>libsvmpredict</code>。<br>其中，用于预测的<code>libsvmpredict</code>的输入输出参数有：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">输入参数：</div><div class="line">	testlabel, 测试数据的真实label，如 [0;0;0;0;1;1;1;1;1;1] 10*1列向量 如果测试数据label未知，可以随意指定值 </div><div class="line">	test_instance, 测试数据的数据， 如m*n的矩阵， 其中m为样本数，n为特征数</div><div class="line">	model, 训练得到的模型，也就是svmtrain的输出模型</div><div class="line">	&apos;options&apos;, 一些可选的的参数, &apos;-q&apos;表示不在窗口打印预测信息, &apos;-b 1&apos; 表示需要返回概率估计值。</div><div class="line">	对于使用&apos;-b 1&apos;需要注意，只有同时在svmtrain函数里也指定才可以，如svmtrain(trainlabel, trainfeats, &apos;-s 0 -t 0 -c 1 -b 1 -q&apos;)</div><div class="line">输出参数：	</div><div class="line">	predict_label, 模型预测的label，如 [0;0;0;1;1;1;1;1;1;1] </div><div class="line">	accuracy, 模型预测准确率， 一个包含了准确率（针对分类），均方误差和平方相关系数（针对回归）</div><div class="line">	decision_values/prob, 模型预测决策值 当&apos;-b 1&apos;指定时， 这里输出为概率估计值，维度m*2 （针对二分类问题）。</div></pre></td></tr></table></figure></p>
+<p>好，现在采用<code>libsvmpredict</code>，为了得到预测概率值，我们需要对<code>libsvmtrain</code>和<code>libsvmpredict</code>指定<code>-b 1</code>。<br>接下来，可以进行<code>libsvm</code>训练，测试并得到其准确率和ROC曲线及AUC了。</p>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line">clear;</div><div class="line">clc;</div><div class="line">tic;</div><div class="line"></div><div class="line">addpath(<span class="string">'/usr/local/MATLAB/R2015a/libsvm/matlab/'</span>); </div><div class="line">load(<span class="string">'./train.mat'</span>); <span class="comment">% 载入训练数据。1200*5的trainfeats 1200*1的trainlabel 两类样本为0 1 </span></div><div class="line">load(<span class="string">'./test.mat'</span>);  <span class="comment">% 载入测试数据。200*5的testfeats 200*1的testlabel </span></div><div class="line"></div><div class="line"><span class="comment">%% data preprocessing scale to -1 1</span></div><div class="line">[trainfeats, ~] = mapminmax(trainfeats', <span class="number">-1</span>, <span class="number">1</span>); <span class="comment">% the min and max value aim to each row </span></div><div class="line">trainfeats = trainfeats';</div><div class="line">[testfeats, ~] = mapminmax(testfeats', <span class="number">-1</span>, <span class="number">1</span>); <span class="comment">% the min and max value aim to each row </span></div><div class="line">testfeats = testfeats';</div><div class="line"></div><div class="line"><span class="comment">%% model train and predict   </span></div><div class="line">cmd = <span class="string">'-s 0 -t 0 -c 1 -b 1 -q'</span>;</div><div class="line">model = libsvmtrain(trainlabel, trainfeats, cmd);</div><div class="line">[predict_label, accuracy, prob] = libsvmpredict(testlabel, testfeats, model, <span class="string">'-b 1'</span>);   </div><div class="line">[X,Y, ~, AUC] = perfcurve(testlabel, prob(:,<span class="number">2</span>), <span class="number">1</span>); <span class="comment">% calculate the auc</span></div><div class="line"></div><div class="line"><span class="built_in">disp</span>(accuracy(<span class="number">1</span>))</div><div class="line"><span class="built_in">disp</span>(AUC)</div><div class="line">plot(X, Y, <span class="string">'r'</span>)   </div><div class="line"></div><div class="line">toc;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/matlab/" rel="tag"># matlab</a>
+          
+            <a href="/tags/libsvm/" rel="tag"># libsvm</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/19/神经网络与深度学习代码解读/" rel="next" title="神经网络与深度学习代码解读">
+                <i class="fa fa-chevron-left"></i> 神经网络与深度学习代码解读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/16/途经农田有感/" rel="prev" title="途经农田有感">
+                途经农田有感 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#直入主题"><span class="nav-number">1.</span> <span class="nav-text">直入主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举例"><span class="nav-number">2.</span> <span class="nav-text">举例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python,tensorflow," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="虽然这两天状态有些差，但是断断续续的看代码还是学到了一点东西，关于python中经常用到的对象序列化反序列化以及文件的读写操作；关于tensorflow中flags.py对命令行参数解析；以及对ubuntu系统安装的psensorCPU/GPU温度监控做一个总结，这种学到新东西的感觉真是圆满啊
+序列化与反序列化做分类分割模型的训练时，都不可能通过一张张图片训练集直接操作的，大部分情况下是对图片的灰">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python中对象序列化及tensorflow的命令行参数解析">
+<meta property="og:url" content="http://blog.cyyan.cn/2017/09/17/python中对象序列化及tensorflow的命令行参数解析/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="虽然这两天状态有些差，但是断断续续的看代码还是学到了一点东西，关于python中经常用到的对象序列化反序列化以及文件的读写操作；关于tensorflow中flags.py对命令行参数解析；以及对ubuntu系统安装的psensorCPU/GPU温度监控做一个总结，这种学到新东西的感觉真是圆满啊
+序列化与反序列化做分类分割模型的训练时，都不可能通过一张张图片训练集直接操作的，大部分情况下是对图片的灰">
+<meta property="og:image" content="http://img.blog.csdn.net/20170928101431008?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170928101450359?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170928101523207?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python中对象序列化及tensorflow的命令行参数解析">
+<meta name="twitter:description" content="虽然这两天状态有些差，但是断断续续的看代码还是学到了一点东西，关于python中经常用到的对象序列化反序列化以及文件的读写操作；关于tensorflow中flags.py对命令行参数解析；以及对ubuntu系统安装的psensorCPU/GPU温度监控做一个总结，这种学到新东西的感觉真是圆满啊
+序列化与反序列化做分类分割模型的训练时，都不可能通过一张张图片训练集直接操作的，大部分情况下是对图片的灰">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170928101431008?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2017/09/17/python中对象序列化及tensorflow的命令行参数解析/"/>
+
+
+
+
+
+  <title> python中对象序列化及tensorflow的命令行参数解析 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2017/09/17/python中对象序列化及tensorflow的命令行参数解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python中对象序列化及tensorflow的命令行参数解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-17T07:18:49+00:00">
+                2017-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>虽然这两天状态有些差，但是断断续续的看代码还是学到了一点东西，关于python中经常用到的对象序列化反序列化以及文件的读写操作；关于tensorflow中flags.py对命令行参数解析；以及对ubuntu系统安装的psensorCPU/GPU温度监控做一个总结，这种学到新东西的感觉真是圆满啊</strong></p>
+<h3 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h3><p>做分类分割模型的训练时，都不可能通过一张张图片训练集直接操作的，大部分情况下是对图片的灰度值进行操作；灰度值数据存入文件中，我们不可能单纯通过<code>file.read()</code> 或者<code>file.readline()</code>读取，很慢还麻烦；更多时候，我们是通过<code>cPickle.load()</code>将文件数据反序列化后存入对象，然后对对象（list或者tuple或者dict）进行切片操作选取部分数据或者其他操作，这样大大提高速度。<br>同样，当有些参数如weight/bias等需要保留至磁盘时，同样可以通过<code>cPickle.dump()</code>将数据对象序列化后存入文件。<br>具体示例如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="string">"""以下为将data对象序列化后存入test.txt文件"""</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> cPickle <span class="keyword">as</span> cp <span class="comment"># 导入cPickle模块</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> numpy <span class="keyword">as</span> np <span class="comment"># 导入numpy模块</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>data = np.random.randn(<span class="number">2</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">3</span>) <span class="comment"># 随机初始化一个[2,4,4,3]的正态分布，可以当作是两张4*4像素的3 channels 图片的灰度值</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>data <span class="comment"># 显示该矩阵数据</span></div><div class="line">array([[[[<span class="number">-0.11245588</span>,  <span class="number">0.46361267</span>, <span class="number">-0.45861576</span>],</div><div class="line">         [ <span class="number">1.08045987</span>, <span class="number">-0.0912301</span> ,  <span class="number">1.8826123</span> ],</div><div class="line">         [<span class="number">-0.51326317</span>, <span class="number">-1.2739741</span> ,  <span class="number">0.96748474</span>],</div><div class="line">         [ <span class="number">1.5503973</span> ,  <span class="number">0.06333209</span>,  <span class="number">0.89981012</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.29903728</span>,  <span class="number">1.9080101</span> , <span class="number">-1.06983402</span>],</div><div class="line">         [<span class="number">-0.9695859</span> , <span class="number">-1.47038233</span>,  <span class="number">0.95528392</span>],</div><div class="line">         [<span class="number">-1.02076298</span>,  <span class="number">1.28100534</span>,  <span class="number">0.48845259</span>],</div><div class="line">         [ <span class="number">1.04841292</span>, <span class="number">-0.01142226</span>,  <span class="number">0.10188068</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.3883587</span> ,  <span class="number">0.37042073</span>, <span class="number">-0.0289424</span> ],</div><div class="line">         [ <span class="number">0.53593898</span>,  <span class="number">1.71126688</span>,  <span class="number">0.1262282</span> ],</div><div class="line">         [ <span class="number">0.92322512</span>,  <span class="number">0.24725783</span>,  <span class="number">0.8679894</span> ],</div><div class="line">         [<span class="number">-0.36954911</span>,  <span class="number">0.74044357</span>, <span class="number">-0.44616424</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.91045428</span>, <span class="number">-0.24680013</span>, <span class="number">-0.83070879</span>],</div><div class="line">         [<span class="number">-0.34094366</span>,  <span class="number">1.7384725</span> , <span class="number">-0.33322178</span>],</div><div class="line">         [<span class="number">-0.75691129</span>, <span class="number">-0.55346692</span>, <span class="number">-0.06621144</span>],</div><div class="line">         [<span class="number">-0.18568211</span>, <span class="number">-0.90673854</span>,  <span class="number">0.25074295</span>]]],</div><div class="line"></div><div class="line"></div><div class="line">       [[[ <span class="number">0.9069235</span> ,  <span class="number">0.60922932</span>, <span class="number">-0.29551031</span>],</div><div class="line">         [<span class="number">-1.34363931</span>,  <span class="number">0.57989501</span>,  <span class="number">0.18441912</span>],</div><div class="line">         [<span class="number">-0.29126267</span>, <span class="number">-0.28990356</span>,  <span class="number">0.68273307</span>],</div><div class="line">         [<span class="number">-0.13870684</span>, <span class="number">-0.453214</span>  ,  <span class="number">1.02924452</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">1.03025589</span>, <span class="number">-0.20542393</span>,  <span class="number">0.71855423</span>],</div><div class="line">         [<span class="number">-0.40312111</span>, <span class="number">-0.09586122</span>,  <span class="number">0.00740302</span>],</div><div class="line">         [ <span class="number">0.54204646</span>,  <span class="number">1.07633607</span>, <span class="number">-0.23386144</span>],</div><div class="line">         [ <span class="number">0.06289798</span>,  <span class="number">0.02128197</span>, <span class="number">-1.15631823</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">1.12197064</span>, <span class="number">-0.18423948</span>, <span class="number">-0.61632741</span>],</div><div class="line">         [<span class="number">-1.38417149</span>, <span class="number">-1.70282593</span>,  <span class="number">0.42730971</span>],</div><div class="line">         [ <span class="number">0.52566924</span>,  <span class="number">0.24153171</span>,  <span class="number">0.60613443</span>],</div><div class="line">         [<span class="number">-1.12691221</span>, <span class="number">-1.67107417</span>, <span class="number">-1.52135605</span>]],</div><div class="line"></div><div class="line">        [[<span class="number">-2.31999217</span>, <span class="number">-0.57238608</span>, <span class="number">-0.66098013</span>],</div><div class="line">         [ <span class="number">1.72764717</span>, <span class="number">-1.89471904</span>,  <span class="number">0.36895925</span>],</div><div class="line">         [<span class="number">-1.67735118</span>,  <span class="number">0.6438323</span> , <span class="number">-1.73313038</span>],</div><div class="line">         [<span class="number">-1.00737721</span>, <span class="number">-0.60583479</span>,  <span class="number">2.15804428</span>]]]])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>file = open(<span class="string">'./test.txt'</span>,<span class="string">'wb'</span>) <span class="comment"># 以二进制只写方式打开根目录下的test.txt文件，如果没有则创建一个test.txt文件</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>cp.dump(data,file) <span class="comment"># 调用cPickle中的dump()函数，将data序列化后传入test.txt文件</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>file.close() <span class="comment"># 数据写完后，关闭文件</span></div></pre></td></tr></table></figure></p>
+<p>经过上述操作后，根目录下出现一个test.txt文件，打开文件如下图2所示，由于以二进制方式写，所以通过文本方式打开为乱码；实际上，反序列化后查看对象，数据不会有任何问题<br><img src="http://img.blog.csdn.net/20170928101431008?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br><strong>图1 为在根目录创建的test.txt文件</strong><br><img src="http://img.blog.csdn.net/20170928101450359?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><strong>图2 为打开test.txt文件后显示内容</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="string">"""以下为将文件中数据反序列化后存入对象并查看数据"""</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>FILE = open(<span class="string">'./test.txt'</span>,<span class="string">'rb'</span>) <span class="comment"># 以二进制只读方式打开根目录下的test.txt文件</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>DATA = cp.load(FILE) <span class="comment"># 调用cPickle的load函数反序列化test.txt文件中数据送入DATA对象</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>FILE.close() <span class="comment">#文件用完后，记得关闭</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>DATA <span class="comment"># 查看DATA对象数据</span></div><div class="line">array([[[[<span class="number">-0.11245588</span>,  <span class="number">0.46361267</span>, <span class="number">-0.45861576</span>],</div><div class="line">         [ <span class="number">1.08045987</span>, <span class="number">-0.0912301</span> ,  <span class="number">1.8826123</span> ],</div><div class="line">         [<span class="number">-0.51326317</span>, <span class="number">-1.2739741</span> ,  <span class="number">0.96748474</span>],</div><div class="line">         [ <span class="number">1.5503973</span> ,  <span class="number">0.06333209</span>,  <span class="number">0.89981012</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.29903728</span>,  <span class="number">1.9080101</span> , <span class="number">-1.06983402</span>],</div><div class="line">         [<span class="number">-0.9695859</span> , <span class="number">-1.47038233</span>,  <span class="number">0.95528392</span>],</div><div class="line">         [<span class="number">-1.02076298</span>,  <span class="number">1.28100534</span>,  <span class="number">0.48845259</span>],</div><div class="line">         [ <span class="number">1.04841292</span>, <span class="number">-0.01142226</span>,  <span class="number">0.10188068</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.3883587</span> ,  <span class="number">0.37042073</span>, <span class="number">-0.0289424</span> ],</div><div class="line">         [ <span class="number">0.53593898</span>,  <span class="number">1.71126688</span>,  <span class="number">0.1262282</span> ],</div><div class="line">         [ <span class="number">0.92322512</span>,  <span class="number">0.24725783</span>,  <span class="number">0.8679894</span> ],</div><div class="line">         [<span class="number">-0.36954911</span>,  <span class="number">0.74044357</span>, <span class="number">-0.44616424</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.91045428</span>, <span class="number">-0.24680013</span>, <span class="number">-0.83070879</span>],</div><div class="line">         [<span class="number">-0.34094366</span>,  <span class="number">1.7384725</span> , <span class="number">-0.33322178</span>],</div><div class="line">         [<span class="number">-0.75691129</span>, <span class="number">-0.55346692</span>, <span class="number">-0.06621144</span>],</div><div class="line">         [<span class="number">-0.18568211</span>, <span class="number">-0.90673854</span>,  <span class="number">0.25074295</span>]]],</div><div class="line"></div><div class="line"></div><div class="line">       [[[ <span class="number">0.9069235</span> ,  <span class="number">0.60922932</span>, <span class="number">-0.29551031</span>],</div><div class="line">         [<span class="number">-1.34363931</span>,  <span class="number">0.57989501</span>,  <span class="number">0.18441912</span>],</div><div class="line">         [<span class="number">-0.29126267</span>, <span class="number">-0.28990356</span>,  <span class="number">0.68273307</span>],</div><div class="line">         [<span class="number">-0.13870684</span>, <span class="number">-0.453214</span>  ,  <span class="number">1.02924452</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">1.03025589</span>, <span class="number">-0.20542393</span>,  <span class="number">0.71855423</span>],</div><div class="line">         [<span class="number">-0.40312111</span>, <span class="number">-0.09586122</span>,  <span class="number">0.00740302</span>],</div><div class="line">         [ <span class="number">0.54204646</span>,  <span class="number">1.07633607</span>, <span class="number">-0.23386144</span>],</div><div class="line">         [ <span class="number">0.06289798</span>,  <span class="number">0.02128197</span>, <span class="number">-1.15631823</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">1.12197064</span>, <span class="number">-0.18423948</span>, <span class="number">-0.61632741</span>],</div><div class="line">         [<span class="number">-1.38417149</span>, <span class="number">-1.70282593</span>,  <span class="number">0.42730971</span>],</div><div class="line">         [ <span class="number">0.52566924</span>,  <span class="number">0.24153171</span>,  <span class="number">0.60613443</span>],</div><div class="line">         [<span class="number">-1.12691221</span>, <span class="number">-1.67107417</span>, <span class="number">-1.52135605</span>]],</div><div class="line"></div><div class="line">        [[<span class="number">-2.31999217</span>, <span class="number">-0.57238608</span>, <span class="number">-0.66098013</span>],</div><div class="line">         [ <span class="number">1.72764717</span>, <span class="number">-1.89471904</span>,  <span class="number">0.36895925</span>],</div><div class="line">         [<span class="number">-1.67735118</span>,  <span class="number">0.6438323</span> , <span class="number">-1.73313038</span>],</div><div class="line">         [<span class="number">-1.00737721</span>, <span class="number">-0.60583479</span>,  <span class="number">2.15804428</span>]]]])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.reshape(DATA,[<span class="number">-1</span>,<span class="number">2</span>,<span class="number">8</span>,<span class="number">3</span>]) <span class="comment"># 对DATA数据进行reshape操作</span></div><div class="line">array([[[[<span class="number">-0.11245588</span>,  <span class="number">0.46361267</span>, <span class="number">-0.45861576</span>],</div><div class="line">         [ <span class="number">1.08045987</span>, <span class="number">-0.0912301</span> ,  <span class="number">1.8826123</span> ],</div><div class="line">         [<span class="number">-0.51326317</span>, <span class="number">-1.2739741</span> ,  <span class="number">0.96748474</span>],</div><div class="line">         [ <span class="number">1.5503973</span> ,  <span class="number">0.06333209</span>,  <span class="number">0.89981012</span>],</div><div class="line">         [ <span class="number">0.29903728</span>,  <span class="number">1.9080101</span> , <span class="number">-1.06983402</span>],</div><div class="line">         [<span class="number">-0.9695859</span> , <span class="number">-1.47038233</span>,  <span class="number">0.95528392</span>],</div><div class="line">         [<span class="number">-1.02076298</span>,  <span class="number">1.28100534</span>,  <span class="number">0.48845259</span>],</div><div class="line">         [ <span class="number">1.04841292</span>, <span class="number">-0.01142226</span>,  <span class="number">0.10188068</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">0.3883587</span> ,  <span class="number">0.37042073</span>, <span class="number">-0.0289424</span> ],</div><div class="line">         [ <span class="number">0.53593898</span>,  <span class="number">1.71126688</span>,  <span class="number">0.1262282</span> ],</div><div class="line">         [ <span class="number">0.92322512</span>,  <span class="number">0.24725783</span>,  <span class="number">0.8679894</span> ],</div><div class="line">         [<span class="number">-0.36954911</span>,  <span class="number">0.74044357</span>, <span class="number">-0.44616424</span>],</div><div class="line">         [ <span class="number">0.91045428</span>, <span class="number">-0.24680013</span>, <span class="number">-0.83070879</span>],</div><div class="line">         [<span class="number">-0.34094366</span>,  <span class="number">1.7384725</span> , <span class="number">-0.33322178</span>],</div><div class="line">         [<span class="number">-0.75691129</span>, <span class="number">-0.55346692</span>, <span class="number">-0.06621144</span>],</div><div class="line">         [<span class="number">-0.18568211</span>, <span class="number">-0.90673854</span>,  <span class="number">0.25074295</span>]]],</div><div class="line"></div><div class="line"></div><div class="line">       [[[ <span class="number">0.9069235</span> ,  <span class="number">0.60922932</span>, <span class="number">-0.29551031</span>],</div><div class="line">         [<span class="number">-1.34363931</span>,  <span class="number">0.57989501</span>,  <span class="number">0.18441912</span>],</div><div class="line">         [<span class="number">-0.29126267</span>, <span class="number">-0.28990356</span>,  <span class="number">0.68273307</span>],</div><div class="line">         [<span class="number">-0.13870684</span>, <span class="number">-0.453214</span>  ,  <span class="number">1.02924452</span>],</div><div class="line">         [ <span class="number">1.03025589</span>, <span class="number">-0.20542393</span>,  <span class="number">0.71855423</span>],</div><div class="line">         [<span class="number">-0.40312111</span>, <span class="number">-0.09586122</span>,  <span class="number">0.00740302</span>],</div><div class="line">         [ <span class="number">0.54204646</span>,  <span class="number">1.07633607</span>, <span class="number">-0.23386144</span>],</div><div class="line">         [ <span class="number">0.06289798</span>,  <span class="number">0.02128197</span>, <span class="number">-1.15631823</span>]],</div><div class="line"></div><div class="line">        [[ <span class="number">1.12197064</span>, <span class="number">-0.18423948</span>, <span class="number">-0.61632741</span>],</div><div class="line">         [<span class="number">-1.38417149</span>, <span class="number">-1.70282593</span>,  <span class="number">0.42730971</span>],</div><div class="line">         [ <span class="number">0.52566924</span>,  <span class="number">0.24153171</span>,  <span class="number">0.60613443</span>],</div><div class="line">         [<span class="number">-1.12691221</span>, <span class="number">-1.67107417</span>, <span class="number">-1.52135605</span>],</div><div class="line">         [<span class="number">-2.31999217</span>, <span class="number">-0.57238608</span>, <span class="number">-0.66098013</span>],</div><div class="line">         [ <span class="number">1.72764717</span>, <span class="number">-1.89471904</span>,  <span class="number">0.36895925</span>],</div><div class="line">         [<span class="number">-1.67735118</span>,  <span class="number">0.6438323</span> , <span class="number">-1.73313038</span>],</div><div class="line">         [<span class="number">-1.00737721</span>, <span class="number">-0.60583479</span>,  <span class="number">2.15804428</span>]]]])</div></pre></td></tr></table></figure>
+<h3 id="tensorflow中的命令行解析"><a href="#tensorflow中的命令行解析" class="headerlink" title="tensorflow中的命令行解析"></a>tensorflow中的命令行解析</h3><p>我们经常看到，在ubuntu的terminal下<code>python xxx.py</code> 时后面有时候会跟一些参数，如<code>python xxx.py --name= &#39;yann&#39;</code>，事实上，这种在命令行下给入参数的方式是通过<code>tensorflow.flags</code>的方式进行操作的。<code>test_flag.py</code>文件如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment">#encoding:utf-8 </span></div><div class="line"><span class="string">"""由于添加了中文注释，所以必须有上面那一句且要在中文注释之前"""</span></div><div class="line"><span class="string">"""这是一个test_flag.py文件用于测试命令行参数解析"""</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</div><div class="line">flags = tf.flags <span class="comment">#flags是文件flags.py，用于处理命令行参数的解析工作</span></div><div class="line">FLAGS = flags.FLAGS <span class="comment">#FLAGS是flags中一个对象，保存了解析后的命令行参数</span></div><div class="line"></div><div class="line"><span class="comment">#以下为调用flags的DEFINE_string函数，变量为flag类型不可更改，但可通过命令行传入,变量保存在flags.FLAGS对象中</span></div><div class="line">flags.DEFINE_string(<span class="string">"model_name"</span>,<span class="string">"default"</span>,<span class="string">"name"</span>) </div><div class="line"><span class="comment">#model_name为变量名，default为值，name为文档说明，用于解释model_name的使用</span></div><div class="line">flags.DEFINE_string(<span class="string">"model_url"</span>,<span class="string">"www.baidu.com"</span>,<span class="string">"url"</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(argv=None)</span>:</span> <span class="comment"># argv=None必须要，表示可以传入参数</span></div><div class="line">    <span class="keyword">print</span> <span class="string">'name:'</span>,FLAGS.model_name,<span class="string">'url:'</span>,FLAGS.model_url </div><div class="line">    <span class="comment">#调用命令行输入的参数,如果没有输入则为定义时默认参数</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>: </div><div class="line">    tf.app.run() <span class="comment">#解析命令行参数，调用main函数 main(sys.argv)</span></div><div class="line"><span class="string">"""</span></div><div class="line">如果我们是直接执行某个.py文件的时候，该文件中那么"__name__ == '__main__'"是True,则执行下面语句；但是我们如果从另外一个.py文件通过import导入该文件的时候，这时__name__的值就是我们这个py文件的名字而不是__main__。</div><div class="line">这个功能还有一个用处：调试代码的时候，在if __name__ == '__main__':中加入一些我们的调试代码，我们可以让外部模块调用的时候不执行我们的调试代码，但是如果我们想排查问题的时候，直接执行该模块文件，调试代码能够正常运行！</div><div class="line">"""</div></pre></td></tr></table></figure></p>
+<p>在terminal下执行：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">yann@Y:~$ python test_flag.py </div><div class="line">name: default url: www.baidu.com</div><div class="line">yann@Y:~$ python test_flag.py --model_name=&apos;yann&apos; --model_url=&apos;www.bing.com&apos;</div><div class="line">name: yann url: www.bing.com</div></pre></td></tr></table></figure></p>
+<p><strong>具体实施还是看代码注释，解释比较清楚了。不懂的东西就要多看两遍。关于tensorflow中命令行参数解析就是这样，其实可以理解为c语言中，<code># define name &#39;yann&#39;</code></strong></p>
+<h3 id="psensor温度监控安装"><a href="#psensor温度监控安装" class="headerlink" title="psensor温度监控安装"></a>psensor温度监控安装</h3><p>安装psensor不仅仅是在安装psensor，还有m-sensors和hddtemp，各种硬件的温度监控包；安装时在进行<code>sudo sensors-detect</code>时有询问的一律yes就可以；最后全部完成最好重启一下系统。<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">yann@Y:~$ sudo apt-get install lm-sensors hddtemp</div><div class="line">yann@Y:~$ sudo sensors-detect</div><div class="line">yann@Y:~$ sudo service module-init-tools start</div><div class="line">yann@Y:~$ sudo apt-get install psensor</div></pre></td></tr></table></figure></p>
+<p><img src="http://img.blog.csdn.net/20170928101523207?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3h3enVveWk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<blockquote>
+<p>OK，今天的总结就这些；<br>状态不好的时候就要耐住性子看东西，很快状态就好了！</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/tensorflow/" rel="tag"># tensorflow</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/16/python面向对象编程/" rel="next" title="python面向对象编程">
+                <i class="fa fa-chevron-left"></i> python面向对象编程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/30/github+hexo+阿里云搭建个人博客/" rel="prev" title="github+hexo+阿里云搭建个人博客">
+                github+hexo+阿里云搭建个人博客 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化与反序列化"><span class="nav-number">1.</span> <span class="nav-text">序列化与反序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tensorflow中的命令行解析"><span class="nav-number">2.</span> <span class="nav-text">tensorflow中的命令行解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#psensor温度监控安装"><span class="nav-number">3.</span> <span class="nav-text">psensor温度监控安装</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

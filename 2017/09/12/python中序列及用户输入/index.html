@@ -1,0 +1,999 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="python的listlist是形如a=[&amp;#39;name&amp;#39;,&amp;#39;age&amp;#39;,&amp;#39;senior&amp;#39;] 这样的以[]表示的数组，list是有序可变的，——列表，可以添加删除更改获取其中元素；
+元素索引python中索引是从0开始的，而且支持倒序获取；如’name’是a[0]；’senior’是a[2]同时也是a[-1]；
+元素操作&amp;gt;&amp;gt;&amp;gt; a.app">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python中序列及用户输入">
+<meta property="og:url" content="http://blog.cyyan.cn/2017/09/12/python中序列及用户输入/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="python的listlist是形如a=[&amp;#39;name&amp;#39;,&amp;#39;age&amp;#39;,&amp;#39;senior&amp;#39;] 这样的以[]表示的数组，list是有序可变的，——列表，可以添加删除更改获取其中元素；
+元素索引python中索引是从0开始的，而且支持倒序获取；如’name’是a[0]；’senior’是a[2]同时也是a[-1]；
+元素操作&amp;gt;&amp;gt;&amp;gt; a.app">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python中序列及用户输入">
+<meta name="twitter:description" content="python的listlist是形如a=[&amp;#39;name&amp;#39;,&amp;#39;age&amp;#39;,&amp;#39;senior&amp;#39;] 这样的以[]表示的数组，list是有序可变的，——列表，可以添加删除更改获取其中元素；
+元素索引python中索引是从0开始的，而且支持倒序获取；如’name’是a[0]；’senior’是a[2]同时也是a[-1]；
+元素操作&amp;gt;&amp;gt;&amp;gt; a.app">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2017/09/12/python中序列及用户输入/"/>
+
+
+
+
+
+  <title> python中序列及用户输入 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2017/09/12/python中序列及用户输入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python中序列及用户输入
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-12T10:24:32+00:00">
+                2017-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="python的list"><a href="#python的list" class="headerlink" title="python的list"></a>python的list</h3><p>list是形如<code>a=[&#39;name&#39;,&#39;age&#39;,&#39;senior&#39;]</code> 这样的以[]表示的数组，list是<strong>有序可变</strong>的，——列表，可以添加删除更改获取其中元素；</p>
+<h4 id="元素索引"><a href="#元素索引" class="headerlink" title="元素索引"></a><strong>元素索引</strong></h4><p>python中索引是从0开始的，而且支持倒序获取；如’name’是a[0]；’senior’是a[2]同时也是a[-1]；</p>
+<h4 id="元素操作"><a href="#元素操作" class="headerlink" title="元素操作"></a><strong>元素操作</strong></h4><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.append(<span class="number">5</span>)				<span class="comment">#在list末尾添加数字元素5；</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.insert(<span class="number">2</span>,<span class="string">'gatsby'</span>)	<span class="comment">#将字符串元素'gatsby'插入到索引为2的位置；</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.pop()					<span class="comment">#删除list末尾的元素；</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.pop(<span class="number">1</span>)				<span class="comment">#删除list中索引为1的元素；</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a[<span class="number">0</span>]=<span class="string">'chaoyang'</span>			<span class="comment">#将索引为0的元素更改为'chaoyang'</span></div></pre></td></tr></table></figure>
+<p>这时<code>a ==  [&#39;chaoyang&#39;, &#39;gatsby&#39;, &#39;senior&#39;]</code><br>当然，list中的元素也可以是一个list，如<code>b = [3,&#39;test&#39;,a]</code> 其中a是上面的list。</p>
+<h3 id="python的tuple"><a href="#python的tuple" class="headerlink" title="python的tuple"></a>python的tuple</h3><p>tuple是形如<code>a = (&#39;name&#39;,&#39;age&#39;,&#39;senior&#39;)</code> 这样以（）表示的数组，tuple是<strong>有序不可变</strong>的，——元组，虽然和list很相像，但是不能添加删除元素只能通过<code>a[0]</code> 索引方式获取元素；或者可以理解为，tuple只有读权限没有写权限；而list具有读写权限；这样来看tuple比list的安全性要高一些。当然tuple可以直接删除整个tuple。</p>
+<p>因为tuple只有读权限，所以一个tuple一旦使用，其中元素必须在初始化时就确定下来；可以有多个元素可以是一个空元组也可以只有一个元素；值得注意的是只有一个元素时元素后须有逗号以防解释器认为这是一个数学公式或变量；<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = (<span class="string">'name'</span>,<span class="string">'age'</span>)		<span class="comment"># a是一个两元素的tuple</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b = ()					<span class="comment"># b是一个空tuple</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c = (<span class="string">'name'</span>,)			<span class="comment"># c是一个一元素的tuple</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>d = (<span class="string">'name'</span>)			<span class="comment"># d是一个字符串变量</span></div></pre></td></tr></table></figure></p>
+<h4 id="tuple指向不变性"><a href="#tuple指向不变性" class="headerlink" title="tuple指向不变性"></a><strong>tuple指向不变性</strong></h4><p>tuple中的不可变指的是，每一个索引对应的位置不变，而不是具体的数值不变；如：若索引为1的对应位置为具体的数值或者字符串，则该元素不变；若对应位置为一个list，此时list中的元素可以添加删除更改，但其实索引指向的位置仍旧是没有改变的。</p>
+<h3 id="python的dictionary"><a href="#python的dictionary" class="headerlink" title="python的dictionary"></a>python的dictionary</h3><p>dictionary是形如<code>a = {&#39;name&#39;:&#39;chaoyang&#39;,&#39;age&#39;:23,&#39;senior&#39;:&#39;forth&#39;}</code>这样以{}表示的无序数组——字典；通过键-值对应存储数据，其中，值value才是需要的数据，键key只是由coder自定义的显式的“索引”；因此其最大的好处是<strong>通过key快速查找对应value</strong>；</p>
+<blockquote>
+<p>引自www.liaoxuefeng.com——</p>
+<blockquote>
+<p>为什么dict查找速度这么快？因为dict的实现原理和查字典是一样的。假设字典包含了1万个汉字，我们要查某一个字，一个办法是把字典从第一页往后翻，直到找到我们想要的字为止，这种方法就是在list中查找元素的方法，list越大，查找越慢。<br>第二种方法是先在字典的索引表里（比如部首表）查这个字对应的页码，然后直接翻到该页，找到这个字，无论找哪个字，这种查找速度都非常快，不会随着字典大小的增加而变慢。<br>dict就是第二种实现方式，给定一个名字，比如’name’，dict在内部就可以直接计算出name对应的存放名字的“页码”，也就是’chaoyang’这个字符串存放的内存地址，直接取出来，所以速度非常快。</p>
+</blockquote>
+</blockquote>
+<h4 id="dictionary操作"><a href="#dictionary操作" class="headerlink" title="dictionary操作"></a><strong>dictionary操作</strong></h4><p>字典是具有读写操作的，可以添加删除更改获取其中键-值；另外，python提供了一种判断某个key是否存在的操作；操作如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>dict = &#123;<span class="string">'name'</span>:<span class="string">'chaoyang'</span>,<span class="string">'age'</span>:<span class="number">23</span>,<span class="string">'senior'</span>:<span class="string">'forth'</span>&#125;</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dict[<span class="string">'major'</span>] = <span class="string">'AI'</span> <span class="comment"># 添加一对键-值 'major':'AI'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dict.pop(<span class="string">'senior'</span>) <span class="comment">#删除key'senior'及其值</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dict[<span class="string">'age'</span>] = <span class="number">24</span> <span class="comment"># 更改'age'的值为24</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dict[<span class="string">'name'</span>] <span class="comment"># 获取'name'对应值</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'major'</span> <span class="keyword">in</span> dict <span class="comment">#判断键'major'是否存在于dict字典，是返回true 否返回false</span></div></pre></td></tr></table></figure></p>
+<p>值得一提的是，在字典中，键一般不能重复；如果键重复则默认以后一个键的值为对应，相当于更改了键的值。另外，<strong>键必须为不可变对象如数字字符串或者元组而不能是list这类具有读写权限的可变数组。</strong></p>
+<h3 id="python的set"><a href="#python的set" class="headerlink" title="python的set"></a>python的set</h3><p>set，集合，是和字典一样用{}界定，但是只有key而没有value的无序数组，形如<code>a = {3,4}</code> ,且set中<strong>每个元素都是唯一的，不可重复</strong>。和字典一样的是，<strong>其中元素必须是不可变对象</strong>，且无法像list那样通过索引直接获取元素。</p>
+<h4 id="set操作"><a href="#set操作" class="headerlink" title="set操作"></a><strong>set操作</strong></h4><p><code>set（）</code> 可以将list或者tuple转换成集合并过滤重复元素。另外可以添加删除元素，也可以像数学集合运算那样进行交集并集求解。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = &#123;<span class="number">3</span>,<span class="number">4</span>&#125; <span class="comment"># 创建集合a</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>] <span class="comment"># 创建list b</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>b_set = set(b) <span class="comment"># 将list b 转化为集合b_set</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c = (<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>) <span class="comment"># 创建 tuple c</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c_set = set(c) <span class="comment"># 将tuple c 转化为集合c_set</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.add(<span class="number">2</span>) <span class="comment"># 添加元素2至集合a</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.remove(<span class="number">4</span>) <span class="comment"># 从集合a删除元素4</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = a &amp; b_set <span class="comment"># 求a和b_set的交集</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y = a | c_set <span class="comment"># a和c_set的并集</span></div></pre></td></tr></table></figure></p>
+<h3 id="关于序列总结"><a href="#关于序列总结" class="headerlink" title="关于序列总结"></a>关于序列总结</h3><p><strong>list[] tuple() dictionary{} set{}四种序列方式，其中list和tuple都是有序的，所谓有序，就是可以直接通过索引的方式，如a[0]这样获取该索引指向的元素值；而像dictionary和set这样的无序序列，就无法通过索引获取；但是dictionary有键-值对，我个人认为其中键就像是自定义的“索引”，因此可以通过键获取对应的值。</strong><br><strong>在使用中，list可读可写，操作性强，因此应用较多；tuple可读不能写，安全性高可作为封装使用；dictionary可用于通过键快速获取对应值；set特点则是元素唯一性及其可操作的并集交集。</strong></p>
+<h3 id="（用户输入）"><a href="#（用户输入）" class="headerlink" title="（用户输入）"></a>（用户输入）</h3><p>输入输出其实是用户和解释器交互的一种直接方式，代码里有什么信息可以print；同样，代码需要什么信息可以通过input或raw_input读取用户输入。通过<code>x = input()</code> 或者<code>x = raw_input()</code> 的方式，用户输入信息存放至 <strong>x</strong> 变量中；当然为了交互性可以<code>x = input(&quot;please give a input:&quot;)</code> ，不至于再多写个print。<br>注意两个不同的是，通过<code>x = input()</code> 的方式，数字可以直接输入，如果输入是字符或者字符串，需要用户显式地用引号说明，否则系统会报错的；如：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = input(<span class="string">"give a input:"</span>)</div><div class="line">give a input:<span class="string">'chaoyang'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y = input(<span class="string">"give a input again:"</span>)</div><div class="line">give a input again:<span class="number">123</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x</div><div class="line"><span class="string">'chaoyang'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y</div><div class="line"><span class="number">123</span></div></pre></td></tr></table></figure></p>
+<p>但是如果通过<code>x = raw_input()</code> 的方式，字符或字符串不需要引号说明，直接输入，包括数字也是；之所以可以这样，是因为raw_input()获得的数据全部以字符的方式存储；如：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = raw_input(<span class="string">"give a input:"</span>)</div><div class="line">give a input:chaoyang</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y = raw_input(<span class="string">"give a input again:"</span>)</div><div class="line">give a input again:<span class="number">123</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>z = raw_input(<span class="string">"give the third input:"</span>)</div><div class="line">give the third input:<span class="string">'test'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x</div><div class="line"><span class="string">'chaoyang'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y</div><div class="line"><span class="string">'123'</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>z</div><div class="line"><span class="string">"'test'"</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/07/一周疯狂装机史/" rel="next" title="一周疯狂装机史">
+                <i class="fa fa-chevron-left"></i> 一周疯狂装机史
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/13/python中基本简洁函数笔记/" rel="prev" title="python中基本简洁函数笔记">
+                python中基本简洁函数笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#python的list"><span class="nav-number">1.</span> <span class="nav-text">python的list</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#元素索引"><span class="nav-number">1.1.</span> <span class="nav-text">元素索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#元素操作"><span class="nav-number">1.2.</span> <span class="nav-text">元素操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python的tuple"><span class="nav-number">2.</span> <span class="nav-text">python的tuple</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tuple指向不变性"><span class="nav-number">2.1.</span> <span class="nav-text">tuple指向不变性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python的dictionary"><span class="nav-number">3.</span> <span class="nav-text">python的dictionary</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dictionary操作"><span class="nav-number">3.1.</span> <span class="nav-text">dictionary操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python的set"><span class="nav-number">4.</span> <span class="nav-text">python的set</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#set操作"><span class="nav-number">4.1.</span> <span class="nav-text">set操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于序列总结"><span class="nav-number">5.</span> <span class="nav-text">关于序列总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（用户输入）"><span class="nav-number">6.</span> <span class="nav-text">（用户输入）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

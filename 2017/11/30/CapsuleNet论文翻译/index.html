@@ -1,0 +1,1005 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="capsnet," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="摘要capsule是一组神经元，其活动向量代表了对象或对象一部分这样特定类型的实体的实例化参数。我们用活动向量的长度代表实体存在的概率，活动向量的方向代表实例化参数。在某一级别的活跃的capsule通过变换矩阵对更高级别的capsule的实例化参数做预测。当多个预测达到一致，更高级别的capsule变得活跃。我们展示了一个训练的多层capsule系统在MNIST上达到很好的效果，尤其在高度重叠数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CapsuleNet论文翻译">
+<meta property="og:url" content="http://blog.cyyan.cn/2017/11/30/CapsuleNet论文翻译/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="摘要capsule是一组神经元，其活动向量代表了对象或对象一部分这样特定类型的实体的实例化参数。我们用活动向量的长度代表实体存在的概率，活动向量的方向代表实例化参数。在某一级别的活跃的capsule通过变换矩阵对更高级别的capsule的实例化参数做预测。当多个预测达到一致，更高级别的capsule变得活跃。我们展示了一个训练的多层capsule系统在MNIST上达到很好的效果，尤其在高度重叠数">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/2017-11-28%2017:52:35%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/fig1+2.png">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/fig3-tab1.png">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/fig4.png">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/fig5.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CapsuleNet论文翻译">
+<meta name="twitter:description" content="摘要capsule是一组神经元，其活动向量代表了对象或对象一部分这样特定类型的实体的实例化参数。我们用活动向量的长度代表实体存在的概率，活动向量的方向代表实例化参数。在某一级别的活跃的capsule通过变换矩阵对更高级别的capsule的实例化参数做预测。当多个预测达到一致，更高级别的capsule变得活跃。我们展示了一个训练的多层capsule系统在MNIST上达到很好的效果，尤其在高度重叠数">
+<meta name="twitter:image" content="http://ox4hr87qc.bkt.clouddn.com/2017-11-28%2017:52:35%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2017/11/30/CapsuleNet论文翻译/"/>
+
+
+
+
+
+  <title> CapsuleNet论文翻译 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2017/11/30/CapsuleNet论文翻译/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CapsuleNet论文翻译
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-30T13:56:53+00:00">
+                2017-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index">
+                    <span itemprop="name">Paper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>capsule是一组神经元，其活动向量代表了对象或对象一部分这样特定类型的实体的实例化参数。我们用活动向量的长度代表实体存在的概率，活动向量的方向代表实例化参数。在某一级别的活跃的capsule通过变换矩阵对更高级别的capsule的实例化参数做预测。当多个预测达到一致，更高级别的capsule变得活跃。我们展示了一个训练的多层capsule系统在MNIST上达到很好的效果，尤其在高度重叠数字的辨别上比卷积网络方法更好。为了达到这个结果我们采用了迭代的路由协议机制：低级别capsule倾向于将其输出发送到和活动向量具有更大标量积的高级别capsule。</p>
+<h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>人类视觉通过使用仔细确定的一系列注视点来忽略不相关的细节，以确保只有极小部分的光学阵列以最高分辨率进行处理。我们无法通过’回想’这种方式来理解一个场景的多少知识来自于一系列注视点，以及我们从一个注视点中收集到多少信息。但是在本文中，我们假设从每个注视点上我们不仅获得一个确定的对象及其属性，我们的多层视觉系统还会创建了一个类似于树状结构的解析结构，这里我们忽略这些单注视点的解析树如何在多注视点上协调的问题。<br>通过动态分配内存方式，解析树通常随手构建出来。然而继Hinton之后，我们假设，对于单一的注视点，解析树是从固定的多层神经网络中雕刻出来的，就像雕塑是从岩石上雕刻出来。每层将被分成许多小的神经元组，这称为“capsule”，而且解析树中每个节点对应一个活跃capsule。 使用迭代的路由过程，每个活跃capsule将在上面的层中选择一个capsule作为父项。 对于视觉系统的更高级别来说，这个迭代的过程将解决分配部分给整体的问题。<br>活跃capsule内神经元的活动代表图像中存在的特定实体的各种属性。这些属性可以包括许多不同类型的实例化参数，例如姿势（位置，大小，方向），变形，速度，反射率，色调，纹理等。一个非常特殊的属性是图像中实例化实体的存在性。 表示存在性的一个明显的方法是使用一个单独的逻辑单元，其输出是实体存在的概率。在本文中，我们提出了一个有趣的替代方法，即使用实例化参数向量的全部长度来表示实体的存在，并强制向量的方向表示实体的属性。 我们通过应用一个向量方向不变但幅度缩小的非线性保证capsule的向量输出的长度不超过1。<br>capsule的输出是一个向量的事实使得可以使用强大的动态路由机制来确保capsule的输出被发送到上面层中的适当的父项。最初，输出被路由到所有可能的父项，但却被和为1的耦合系数缩小。对于每个可能的父项，capsule通过将其输出乘权重矩阵来计算“预测向量”。如果这个预测向量和可能父项的输出有一个大的标量积，则存在自顶向下的反馈，这会增加了该父项的耦合系数，并降低其他父项的耦合系数。这增加了capsule对该父项的贡献，从而进一步增加了capsule的预测与父项输出的标量积。这种“路由协议”应该比由max-pooling实现的允许一层中的神经元忽略下面层中本地池中最活跃的特征检测器的原始路由形式有效得多。我们证明我们的动态路由机制是实现分割高度重叠对象所需的“解释”的有效方法。<br>卷积神经网络(CNN)使用的是学习过的特征检测器的转换副本。这使得CNN能够将关于图像中某一位置获得的好的权重值的知识转化为其他位置。已经证明，这对图像解释非常有帮助。尽管我们用向量输出的capsule和动态路由分别替换了CNN中标量输出的特征检测器和最大池化，但是我们仍然希望跨空间复制学习到的知识。为了达到这个目的，除了最后一层capsule以外其他我们都是卷积的。与CNN一样，我们使高级别capsule覆盖更大的图像区域。然而不像最大池化，我们不会丢弃区域内实体确切位置的相关信息。对于低级别capsule，位置信息由处于活动状态的capsule“地址编码”。随着我们升级层次结构，越来越多的位置信息在（译者注：或译作’以’）capsule的输出向量的实值部分被“速率编码”。将地点编码到速率编码的转变和高级别capsule代表有更多自由度的更复杂实体的事实相结合表明，capsule的维度应当随着我们升级层次结构而增加。</p>
+<h3 id="如何计算capsule的向量输入和输出"><a href="#如何计算capsule的向量输入和输出" class="headerlink" title="如何计算capsule的向量输入和输出"></a>如何计算capsule的向量输入和输出</h3><p>有很多可能的方法来实现capsule的总体思路。 本文的目的不是要探索整个空间，而仅仅是为了表明一个相当直接的实现能够很好地工作，而且动态路由可以帮助。<br>我们想要一个capsule的输出向量的长度来表示由capsule代表的实体出现在当前输入中的概率。因此，我们使用非线性的“squashing”函数来确保短向量长度缩小到几乎为零，长向量长度缩小到略低于1。为了充分利用这种非线性，我们将其留给区别学习。</p>
+<script type="math/tex; mode=display">\mathbf{v}_j=\frac{||\mathbf{s}_j||^2}{1+||\mathbf{s}_j||^2}\frac{\mathbf{s}_j}{||\mathbf{s}_j||}</script><p>这里$\mathbf{v}_j$是capsule$j$的向量输出，$\mathbf{s}_j$是其全部输入。<br>对于除了第一层capsule的所有层，capsule的全部输入$\mathbf{s}_j$是所有来自下层的capsule的预测向量$\mathbf{\hat{u}}_{j|i}$的加权和，其中预测向量由下层capsule的输出$\mathbf{u}_i$乘权重矩阵$\mathbf{W}_{ij}$</p>
+<script type="math/tex; mode=display">\mathbf{s}_j = \sum_i{c_{ij}\mathbf{\hat{u}}_{j|i}}</script><script type="math/tex; mode=display">\mathbf{\hat{u}}_{j|i} = \mathbf{W}_{ij} \mathbf{u}_i</script><p>这里$c_{ij}$是由迭代动态路由进程决定的耦合系数<br>capsule$i$与上述层中的所有capsule之间的耦合系数和为1，并由“路由softmax”确定，路由softmax的初始对数$b_{ij}$是capsule$i$应耦合到capsule$j$的对数先验概率。</p>
+<script type="math/tex; mode=display">c_{ij}  =  \frac{exp(b_{ij})}{\sum_k{exp(b_{ik})}}</script><p>对数先验可以与其他所有权重同时被有差别地学习。这取决于两个capsule的位置和类型，而不是当前的输入图像。然后通过测量上层中的每个capsule$j$的当前输出$\mathbf{v}_j$与capsule$i$做出的预测$\mathbf{\hat{u}}_{j|i}$之间的一致性来迭代地改进初始耦合系数。<br>一致性就是标量积$a_{ij}=\mathbf{v}_j.\mathbf{\hat{u}}_{j|i}$，这个一致性被看作是对数似然，并被添加到初始逻辑$b_{ij}$中，然后计算所有将capsule$i$连接到更高级别的capsule的耦合系数的新值。<br>在卷积capsule层，每个capsule使用网格的每个成员以及每种capsule的不同变换矩阵将向量的局部网格输出到上述层中的每种capsule类型。</p>
+<p><img src="http://ox4hr87qc.bkt.clouddn.com/2017-11-28%2017:52:35%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="name"></p>
+<h3 id="数字存在性的边缘损失"><a href="#数字存在性的边缘损失" class="headerlink" title="数字存在性的边缘损失"></a>数字存在性的边缘损失</h3><p>我们使用实例化向量的长度代表一个capsule实体存在的概率。当且仅当数字出现在图像中时，我们希望对于数字类$k$的顶层capsule有一个长的实例化向量。为了表示更多数字，这里对每一数字capsule$k$使用独立边缘损失$L_k$</p>
+<script type="math/tex; mode=display">L_k = T_k \  max(0, m^+ - ||\mathbf{V}_k||)^2 + \lambda\ (1 - T_k)\ max(0,||\mathbf{V}_k||- m^-)^2</script><p>当且仅当$k$类数字存在，$T_k = 1$，$m^+ = 0.9\ \ m^- = 0.1$ 对于缺少数字类别的损失的 $\lambda$ 降权将停止从缩小所有数字capsule的活动向量的长度的最初的学习。 我们使用$\lambda = 0.5$，总损失仅仅是所有数字capsule的损失的总和。</p>
+<h3 id="CapsNet-结构"><a href="#CapsNet-结构" class="headerlink" title="CapsNet 结构"></a>CapsNet 结构</h3><p>一个简单的CapsNet结构如图1，网络结构很浅，只有两层卷积和一层全连接。 Conv1卷积核为256x9x9，步长为1，ReLU激活函数。这一层将像素强度转换为局部特征检测器的活动，然后将其用作主capsule的输入。<br>主capsule是多维实体的最低级别，并且从相反的图形角度看，激活主capsule对应于反转渲染过程。 比起将实例化的部分拼凑在一起以形成熟悉的整体，这是一个非常不同的计算类型，而这正是capsule设计的优点。<br>第二层（主capsule）是有32通道，8Dcapsule的卷积capsule层（如：每一主capsule包含8个有9*9卷积核和2步长的卷积单元）。每一主capsule输出可以看到所有256×81的Conv1单元的输出，其感受野与capsule中心的位置重叠。总共，主capsule有[32×6×6]的capsule输出（每个输出是一个8D向量）并且[6×6]网格中的每个capsule互相分享他们的权重。人们可以将主capsule看作是一个具有等式1的卷积层作为块的非线性。 最后一层（DigitCaps）每个数字类有一个16Dcapsule，每个capsule都接收来自下层所有capsule的输入。</p>
+<p><img src="http://ox4hr87qc.bkt.clouddn.com/fig1+2.png" alt="fig1"></p>
+<p>我们只在两个连续capsule之间进行路由发送（如：主capsule和DigitCaps间）。因为Conv1输出是1D，所以在它的空间中没有方向可以达成一致。因此，在Conv1和主capsule之间无法使用路由机制。所有的路由逻辑（$b_{ij}$）初始化为0。因此，最初时一个capsule输出($\mathbf{u}_i$)概率相同地($c_{ij}$)被发送给所有父项capsule($\mathbf{v}_0…\mathbf{v}_9$)。<br>我们用tensorflow实现了它，并使用tensorflow的默认参数进行Adam优化，包括指数改变下降的学习率，到最小化等式4中的边缘损失和。</p>
+<h4 id="正则化方法重建"><a href="#正则化方法重建" class="headerlink" title="正则化方法重建"></a>正则化方法重建</h4><p>我们使用额外的重建损失来促进数字capsule对输入数字的实例化参数进行编码。 在训练期间，我们掩盖了除了正确数字capsule的活动向量以外的所有数据。 然后我们使用这个活动向量重建输入图像。 数字capsule的输出被送到3个全连接层构成的解码器中，像图2描述那样对像素强度进行建模。我们最小化逻辑单元的输出与像素强度之间的差的平方和。 我们把这个重建损失降低了0.0005，这样它就不会在训练期间对边缘损失占主导地位。 如图3所示，当只保留重要的细节时，来自CapsNet的16D输出的重建是稳健的。</p>
+<p><img src="http://ox4hr87qc.bkt.clouddn.com/fig3-tab1.png" alt="tab1"></p>
+<h3 id="在MNIST数据集上应用"><a href="#在MNIST数据集上应用" class="headerlink" title="在MNIST数据集上应用"></a>在MNIST数据集上应用</h3><p>我们在28×28的MNIST图像上进行训练，这些图像只通过零填充在每个方向扩展2个像素，而没有使用其他数据增强/变形方法。 数据集分别有60K训练数据和10K的测试数据。<br>我们使用单个模型进行测试，没有任何模型平均。 Wan等人通过旋转和缩放来增加数据，达到0.21％的测试误差。没有旋转缩放的话他们只达到了0.39％。我们在3层网络上得到了0.25％测试误差，这在以前只能通过更深的网络才能达到。表1展示了在MNIST数据集上不同CapsNet设置的对应测试错误率，这显示了路由和正则化重构的重要性。添加正则化重构是在capsule向量中执行姿态编码来提高路由性能。<br>baseline是通道为256,256,128的标准CNN。每层卷积核为5x5，步长为1。最后一层卷积后是分别为328和192的两层全连接。最后一层全连接通过dropout连接到10分类softmax层，采用交叉熵损失。baseline也使用Adam优化在2像素扩展的MNIST上进行训练。 baseline的设计是为了在MNIST上实现最佳性能，同时保持计算成本与CapsNet接近。 在参数方面，baseline有35.4M而CapsNet则为8.2M，没有重建子网络时只为6.8M。</p>
+<h4 id="capsule的个别维度代表了什么"><a href="#capsule的个别维度代表了什么" class="headerlink" title="capsule的个别维度代表了什么"></a>capsule的个别维度代表了什么</h4><p>由于我们传递的只是一个数字的编码并且将其他数字置零，因此数字capsule的维度应该学习以这个类的数字被实例化的方式跨越变化空间。这些变化包括笔画粗细，歪斜和宽度。甚至包括特定数字的变化像2的尾部长度。通过使用解码网络，我们可以看到个别维度表示的内容。在计算正确的数字capsule的活动向量之后，我们可以将这个活动向量的扰动版本馈送到解码网络，并观察扰动是如何影响重建的。这些扰动的例子如图4所示。我们发现capsule的一个维度（16个）几乎总是代表数字的宽度。尽管一些维度代表全局变量的组合，但仍有其他维度代表数字的局部的变量。例如，不同的维度分别用于6的上行长度和环的尺寸。</p>
+<p><img src="http://ox4hr87qc.bkt.clouddn.com/fig4.png" alt="这里写图片描述"></p>
+<h4 id="仿射变换的鲁棒性"><a href="#仿射变换的鲁棒性" class="headerlink" title="仿射变换的鲁棒性"></a>仿射变换的鲁棒性</h4><p>实验表明，与传统的卷积网络相比，每个DigitCaps capsule对于每一类都可以学习更健壮的表示。由于在手写数字中存在自然的偏斜，旋转，风格等变化，训练好的CapsNet对于训练数据的小仿射变换具有适度的鲁棒性。<br>为了测试CapsNet应对仿射变换的鲁棒性，我们在经过填充和转换的的MNIST训练集上训练了一个CapsNet和一个传统的卷积网络（含MaxPooling和DropOut），其中每个示例是一个MNIST数字随机放置在40×40的黑色背景上。 然后我们在affNIST数据集（其中每个例子都是一个随机的经过小仿射变换的一个MNIST数字）上测试了网络。 除了标准MNIST中看到的转换和一些自然变换之外，我们的模型从未受过仿射变换的训练。早期停止训练的CapsNet在扩展的MNIST测试集上达到了99.23％的准确性，在affNIST测试集上达到了79％的准确率。而传统卷积模型在相似参数下在扩展的MNIST测试集上获得相似精度（99.22％），但在专有测试集上仅达到66％准确性。</p>
+<h3 id="分割高度重叠数字"><a href="#分割高度重叠数字" class="headerlink" title="分割高度重叠数字"></a>分割高度重叠数字</h3><p>动态路由可以被看作是允许一个级别的每个capsule关注下一级别的一些活动capsule而忽略其他capsule的并行注意机制。 这使得模型能在即使对象重叠的情况下也能识别图像中的多个对象。Hinton等人提出了分割和识别高度重叠数字的任务（Hinton等人[2000]和其他人已经在相似的领域测试了他们的网络）。路由协议应该能够使用关于对象形状的先验来帮助分割，并且可以避免在像素领域中做更高级分割决策的需要。</p>
+<h4 id="MultiMNIST数据集"><a href="#MultiMNIST数据集" class="headerlink" title="MultiMNIST数据集"></a>MultiMNIST数据集</h4><p>我们在相同集（训练或测试）不同类别的数字上叠加数字来生成MultiMNIST训练和测试数据集。每个数字在每个方向上扩展了4个像素，从而产生36×36的图像。考虑到28×28图像中的数字被限制在20×20的框中，两个数字的边界框平均具有80％的重叠。 对于MNIST数据集中的每个数字，我们生成1K个MultiMNIST examples。所以训练集大小为60M，测试集大小为10M。</p>
+<p><img src="http://ox4hr87qc.bkt.clouddn.com/fig5.png" alt="这里写图片描述"></p>
+<h4 id="MultiMNIST上结果"><a href="#MultiMNIST上结果" class="headerlink" title="　MultiMNIST上结果"></a>　MultiMNIST上结果</h4><p>我们在MultiMNIST训练数据上从头开始训练的3层CapsNet模型比baseline的卷积模型达到更高的分类准确性。在高重叠数字对上我们达到了5.0％的分类错误率，和Ba等人在重叠程度要小得多的任务上的顺序关注模型错误率一样（Ba等人的数字框的重叠度是4％）。在由测试集合中的图像对组成的测试图像上，我们将两个最活跃的数字capsule视为CapsNet产生的分类。在重建期间，我们一次选取一个数字，并使用选定的数字capsule的活动向量来重建所选数字的图像（因为我们使用它来生成合成图像，所以我们知道这个图像）。与我们的MNIST模型唯一的区别在于，我们增加了学习率的衰减步长时间到10倍，因为训练数据集较大。<br>图5所示的重建显示CapsNet能够将图像分割成两个原始数字。由于这个分割不是在像素级别，所以我们观察到模型能够在考虑所有像素的情况下正确处理重叠（一个像素点在两个数字上）。每个数字的位置和样式以DigitCaps编码。解码器已经学会重建给定编码对应的数字。它能够不管重叠而去重建数字的事实表明每个数字capsule可以通过它从主capsule层接收的vote <em>[译者注：这一词放在这里很难译]</em>中选取样式和位置。<br>表1强调了在这个任务中路由capsule的重要性。作为CapsNet准确性分类的基准，我们训练了一个先是两个卷积层再是两个全连接层的卷积网络。第一层有512个大小为9×9，步长为1的卷积核。第二层有256个大小为5×5，步长为1的卷积核。在每个卷积层后有一个大小为2×2，步长为2的池化层。第三层是一个1024维的全连接层。三层的激活函数都采用ReLU非线性。最后一层10个单元也是全连接。我们使用TensorFlow默认的Adam优化来训练最后一层输出的S形交叉熵损失。这个模型有24.56M参数，比参数为11.36M的CapsNet多2倍。我们从较小的CNN开始（前两层分别为32和64的5×5步长为1的卷积核，以及512维全连接层），并逐渐增加网络的宽度，直到我们在MultiMNIST数据的10K子集上达到最佳测试精度。我们还在10K验证集上寻找了正确的衰减步长。<br>我们一次解码两个最活跃的数字capsule得到两张图像。然后通过给每个数字分配所有非零强度的像素，这样对于两个数字我们都得到了分割结果。</p>
+<h3 id="其他数据集"><a href="#其他数据集" class="headerlink" title="其他数据集"></a>其他数据集</h3><p>我们在CIFAR10上测试了我们的模型，并且使用7个模型的集合来实现10.6％的误差，其中每个模型都是在24×24的图像块上进行3次路由迭代训练。每个模型与我们用于MNIST的简单模型具有相同的架构，除了有三个颜色通道和64个不同类型的主capsule。 我们还发现，对路由softmax输出引入“全都不是”这一类别很有用，因为我们不期望10个capsule的最后一层能解释图像中的所有内容。10.6％的测试误差是标准卷积网络在首次应用于CIFAR10时达到的。<br>capsule与生成模型相同的一个缺点是，它喜欢考虑图像中的所有内容，所以对杂乱建模比在动态路由中使用额外的“孤立”类别更好。在CIFAR-10中，背景太多，不能在合理大小的网络中建模，这有助于解释性能较差的问题。<br>我们还测试了与我们在smallNORB上用于MNIST数据集的完全相同的体系结构，并且获得了2.7％的测试错误率，这与现有技术水平相当。smallNORB数据集由96x96立体声灰度图像组成。我们将图像大小调整为48x48，并在训练过程中随机进行32x32的裁剪。测试期间，我们使用中心的32x32的块。<br>我们还在仅有73257个图像的SVHN的小训练集（Netzer et al。[2011]）上训练了一个较小的网络。我们将第一卷积层通道的数量减少到64个，主capsule层减少到16个6D的capsule，最终capsule层为8D，在测试集上达到了4.3％的错误率。</p>
+<hr>
+<h3 id="讨论"><a href="#讨论" class="headerlink" title="讨论"></a>讨论</h3><p>三十年来，语音识别技术的发展使用高斯混合的隐马尔可夫模型作为输出分布。这些模型在小型计算机上很容易学习，但是它们有最终致命的代表性限制：与使用分布式表示的递归神经网络相比，它们所使用的其中之一个代表是指数低效的。为了使HMM可以记住的信息数量增加一倍，我们需要对隐藏节点的数量进行平方增加。对于递归网络，我们只需要将隐藏层的神经元数量加倍。<br>现在卷积神经网络成为目标识别的主要方法，那么问一问是否存在可能导致它们消亡的缺点是有意义的。一个很好的答案是卷积网络在推广到新颖的观点方面的困难。处理副本的能力是内置的，但是对于仿射变换的其他维度，我们必须选择在网格点上复制随维度指数增长的特征检测器，或者同样指数形式地增加标记训练集的大小。capsule网络采取将像素强度转换成识别片段的实例化参数向量，然后将转换矩阵应用于片段以预测较大片段的实例化参数的方式来避免这些指数形式的低效。学习编码部分和整体之间内在空间关系的变换矩阵构成了自动推广到新视点的视点不变知识。Hinton提出通过转换自编码器来生成主Capsule层的实例化参数及其系统所需要的转换矩阵以供给外部。我们提出了一个完整的系统，这同样回答了“通过使用活跃较低级别capsule预测的姿势协议可以识别多大多复杂的视觉实体”。<br>胶囊做了一个非常强烈的代表性假设：在图像的每个位置，一个胶囊代表的实体类型至多有一个实例。这个来源于称为“拥挤”感知现象的假设消除了绑定问题，并允许胶囊使用分布式表示（活动向量）进行编码该类型实体在给定位置的实例化参数。这种分布式表示法指数地比通过激活高维网格上的一个点并利用正确的分布式表示来编码实例化参数更高效，然后capsule可以充分利用空间关系可以通过矩阵相乘建模这一事实。<br>胶囊使用随视点变化而变化的神经活动，而不是试图消除活动中的视点变化。这使得它们比诸如空间变换网络的“标准化”方法更具优势：它们可以同时处理不同对象或对象部分的多个不同的仿射变换。<br>正如我们在本文中所展示的那样，胶囊对于处理视觉中最棘手的问题之一的分割也是非常好的，因为实例化参数的向量允许它们使用路由协议。动态路由过程的重要性也得到了视觉皮层中不变模式识别的生物学合理模型的支持。 Hinton提出了动态连接和基于规范对象的参考框架来生成可以用于对象识别的形状描述。 奥尔斯豪森等人对Hinton动态连接进行了改进，并提出了一个生物学上可信的对象表示的位置和尺度不变模型。<br>目前胶囊的研究处于本世纪初用于语音识别的递归神经网络研究的相似阶段。有一些基本的表现理由认为这是一种更好的方法，但是在它能够超越高度发展的技术之前，可能需要更多的小洞见。事实上，简单的胶囊系统已经在分割重叠数字方面提供了无与伦比的性能，这是胶囊值得探索的早期指示。</p>
+<h3 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h3><p>致谢。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/capsnet/" rel="tag"># capsnet</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/28/hexo渲染mathjax公式解决方案/" rel="next" title="hexo渲染mathjax公式解决方案">
+                <i class="fa fa-chevron-left"></i> hexo渲染mathjax公式解决方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/06/关于环境变量问题/" rel="prev" title="关于环境变量问题">
+                关于环境变量问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何计算capsule的向量输入和输出"><span class="nav-number">3.</span> <span class="nav-text">如何计算capsule的向量输入和输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字存在性的边缘损失"><span class="nav-number">4.</span> <span class="nav-text">数字存在性的边缘损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CapsNet-结构"><span class="nav-number">5.</span> <span class="nav-text">CapsNet 结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#正则化方法重建"><span class="nav-number">5.1.</span> <span class="nav-text">正则化方法重建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在MNIST数据集上应用"><span class="nav-number">6.</span> <span class="nav-text">在MNIST数据集上应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#capsule的个别维度代表了什么"><span class="nav-number">6.1.</span> <span class="nav-text">capsule的个别维度代表了什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#仿射变换的鲁棒性"><span class="nav-number">6.2.</span> <span class="nav-text">仿射变换的鲁棒性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分割高度重叠数字"><span class="nav-number">7.</span> <span class="nav-text">分割高度重叠数字</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MultiMNIST数据集"><span class="nav-number">7.1.</span> <span class="nav-text">MultiMNIST数据集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MultiMNIST上结果"><span class="nav-number">7.2.</span> <span class="nav-text">　MultiMNIST上结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他数据集"><span class="nav-number">8.</span> <span class="nav-text">其他数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#讨论"><span class="nav-number">9.</span> <span class="nav-text">讨论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#致谢"><span class="nav-number">10.</span> <span class="nav-text">致谢</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1015 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="注意力," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="总结一下最近看的一篇论文，Non-local Neural Networks，一种注意力机制模块，文章相对来说比较老，CVPR2018， 部分内容参考了这篇知乎博客
+我将从以下几个方面总结一下论文，也有一点自己的整理，欢迎拍砖。
+为什么提出Non-local？计算机视觉领域，尤其对于动态视频序列中，帧内帧间的依赖关系十分重要。尤其像下图中视频的行为分类任务，全局内容的理解以及不同帧间的联系对于分类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机视觉中的Non-local-Block以及其他注意力机制">
+<meta property="og:url" content="http://blog.cyyan.cn/2019/05/26/计算机视觉中的Non-local-Block以及其他注意力机制/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="总结一下最近看的一篇论文，Non-local Neural Networks，一种注意力机制模块，文章相对来说比较老，CVPR2018， 部分内容参考了这篇知乎博客
+我将从以下几个方面总结一下论文，也有一点自己的整理，欢迎拍砖。
+为什么提出Non-local？计算机视觉领域，尤其对于动态视频序列中，帧内帧间的依赖关系十分重要。尤其像下图中视频的行为分类任务，全局内容的理解以及不同帧间的联系对于分类">
+<meta property="og:image" content="http://blog.cyyan.cn/download/Non_Local/1.PNG">
+<meta property="og:image" content="http://blog.cyyan.cn/download/Non_Local/2.PNG">
+<meta property="og:image" content="http://blog.cyyan.cn/download/Non_Local/3.PNG">
+<meta property="og:image" content="http://blog.cyyan.cn/download/Non_Local/4.PNG">
+<meta property="og:image" content="http://blog.cyyan.cn/download/Non_Local/5.PNG">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机视觉中的Non-local-Block以及其他注意力机制">
+<meta name="twitter:description" content="总结一下最近看的一篇论文，Non-local Neural Networks，一种注意力机制模块，文章相对来说比较老，CVPR2018， 部分内容参考了这篇知乎博客
+我将从以下几个方面总结一下论文，也有一点自己的整理，欢迎拍砖。
+为什么提出Non-local？计算机视觉领域，尤其对于动态视频序列中，帧内帧间的依赖关系十分重要。尤其像下图中视频的行为分类任务，全局内容的理解以及不同帧间的联系对于分类">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/Non_Local/1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2019/05/26/计算机视觉中的Non-local-Block以及其他注意力机制/"/>
+
+
+
+
+
+  <title> 计算机视觉中的Non-local-Block以及其他注意力机制 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2019/05/26/计算机视觉中的Non-local-Block以及其他注意力机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                计算机视觉中的Non-local-Block以及其他注意力机制
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-26T01:42:37+00:00">
+                2019-05-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index">
+                    <span itemprop="name">Paper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>总结一下最近看的一篇论文，<a href="https://arxiv.org/abs/1711.07971" target="_blank" rel="external">Non-local Neural Networks</a>，一种注意力机制模块，文章相对来说比较老，CVPR2018， 部分内容参考了这篇知乎<a href="https://zhuanlan.zhihu.com/p/53010734" target="_blank" rel="external">博客</a></p>
+<p>我将从以下几个方面总结一下论文，也有一点自己的整理，欢迎拍砖。</p>
+<h4 id="为什么提出Non-local？"><a href="#为什么提出Non-local？" class="headerlink" title="为什么提出Non-local？"></a>为什么提出Non-local？</h4><p>计算机视觉领域，尤其对于动态视频序列中，帧内帧间的依赖关系十分重要。尤其像下图中视频的行为分类任务，全局内容的理解以及不同帧间的联系对于分类结果导向作用很强。现在比较通用普遍的做法是，通过循环卷积网络联系$t$和$t-1$，或者通过更深的网络增大感受野提高对全局内容的理解。尽管如此，这种方式仍旧是比较local的，不论时间方向或者空间位置。而且，最大的问题是：没法进行远距离信息的来回传递；而且deeper网络计算量大但效率低，梯度优化起来也比较困难。<br>因此，针对<strong>远距离信息传递</strong>问题，提高<strong>长距离依赖</strong>，本文从传统的非局部均值滤波方法中受到启发，提出了卷积网络中的<strong>non-local</strong>，即：<strong>某一像素点处的响应是其他所有点处的特征权重和</strong>，将每一个点与其他所有点相关联，实现<strong>non-local</strong> 思想。<br><em>【可见，文章解决的痛点targetable，有意义。而且解决方法也有图像处理基础，禁得起推敲】</em><br><img src="/download/Non_Local/1.PNG" alt="1"></p>
+<h4 id="Non-local-的思想和简单数学原理"><a href="#Non-local-的思想和简单数学原理" class="headerlink" title="Non-local 的思想和简单数学原理"></a>Non-local 的思想和简单数学原理</h4><p><strong>Non-local</strong>的核心思想就是上面说的，<strong>某一像素点处的响应是其他所有点处的特征权重和</strong>。因此，假设对于一个2D的7*7特征图，总共是49*1（拉平操作）个位置，每个位置都与其他位置（包括本身位置）有关联性度量，就会得到49*49的关联性矩阵，而这个关联性矩阵经过归一化后其实可以理解为彼此之间的关联权重，因为不同像素点间的关联性都是不同的，因此这个权重本质上其实已经实现了注意力。当将这个49*49的权重再与原特征图49*1做矩阵乘时，得到的49*1矩阵就是该2D特征图所有像素点的响应。因此在这里的2D特征图的空间位置的注意力操作就是这个<strong>non-local</strong>操作。<br>以上是举了一个例子，根据核心思想去理解这个东西。下面可以看一下具体的数学公式代入，抽象化。以下是我整理的公式图片，所有公式都在这上面。<br><img src="/download/Non_Local/2.PNG" alt="2"></p>
+<p>将<strong>non-local</strong>的核心思想<strong>某一像素点处的响应是其他所有点处的特征权重和</strong>进行数学化，就是图片中的左公式（1），很好理解，其中$y_i$代表第$i$像素点处的响应，$f(x_i, x_j)$表示两个像素点的关联性度量函数，$g(x_j)$表示对$x_j$特征的embedding线性映射，这里用$W_g x_j$表示，$C(x)$表示一个归一化操作。如果左式理解不清，可以看右式，非常直观。<br><strong>其他所有点$x_j$，权重$f(x_i, x_j)$，特征$W_g x_j$， 和$\sum$， 以及归一化$C(x)$</strong>，一目了然。<br>而在核心思想的数学化公式中，$f(x_i, x_j)$和$C(x)$没有具体的函数定义，下面就对其进行实例化。</p>
+<ul>
+<li>公式（2）是其中一种常用的高斯函数进行相似度度量，两向量直接进行矩阵乘然后通过指数放大差异；这里归一化函数选用该点处所有相似度值的和$\sum_j f(x_i, x_j)$。这里值得注意的是，归一化函数的选用使得公式（1）变成了$softmax= \frac{\exp(x_i) }{ \sum_j \exp(x_j)}$函数形式;</li>
+<li>公式（3）是公式（2）的改进形式，先将两向量分别映射到不同的嵌入空间（也就是进行不同的特征线性映射），然后进行公式（2）的应用；</li>
+<li>公式（4）又是公式（3）的改进形式，不再用指数变换，归一化函数$C(x)$也直接采用$N$；这里主要是为了进行验证$softmax$激活函数的作用；</li>
+<li>公式（5）是根据Relation~Networks论文提出来的特征concatenate形式；然后进行卷积变换；在卷积中实现不同位置的关联，也就是相似度的度量。<br><em>【总而言之，几种相似度度量函数都有基础依据，又有自己实验的想法在里面。数学原理很清晰。】</em></li>
+</ul>
+<h4 id="Non-local在神经网络中的实现"><a href="#Non-local在神经网络中的实现" class="headerlink" title="Non-local在神经网络中的实现"></a>Non-local在神经网络中的实现</h4><p>数学原理讲完了，下面就是具体的卷积网络中的应用了。论文以视频流的行为分类做了一个例子，不仅包含了同一帧的空间位置的相似度度量，还有不同帧之间同一位置、不同位置的相似度度量。为了简化，下面主要以图像领域空间位置的相似度度量做一个通俗的解释。<br><img src="/download/Non_Local/3.PNG" alt="3"></p>
+<p>从图片右边公式（3）出发，为了在卷积网络中实现该相似度度量函数下的像素点响应，设计的<strong>non-local block</strong>具体如图左边网络结构。<br>从上往下看，输入特征图为$C*H*W$，首先矩阵拉成向量得到$C*HW$，然后采用1*1卷积操作分别进行$g(x)$、$\theta(x)$和$\phi(x_j)$的线性映射，也就是图中的$W_v$、$W_k$和$W_q$；都得到嵌入空间下的$C*HW$；对于$\theta(x)$的$C*HW$进行转置得到$HW*C$与$\phi(x_j)$下的$C*HW$矩阵乘得到$HW*HW$相似度矩阵；然后$g(x)$的$C*HW$与经过$softmax$操作的$HW*HW$相似度矩阵再矩阵乘得到$C*HW$的响应，此时再转换为$C*H*W$即是经过了<strong>non-local</strong>加强距离依赖的特征图。<br>论文同时又借鉴了resnet的恒等映射思想，再次对$y_i$下的的$C*H*W$经过1*1卷积然后与原输入特征图进行像素点的加和。<br>即公式（6）。<br>理解了公式（3）的这个block结构，剩下的也很好理解。公式（2）的block结构相较于结构图不进行$W_k$和$W_q$的1*1卷积操作；公式（4）相较于结构图不进行$softmax$激活，直接$1/N$归一化即可；公式（5）变换相较于结构图复杂一点，用特征concatenate，然后1*1卷积再进行$ReLU$激活。<br>其实可以看到，$HW*HW$的相似度矩阵可以是$C*C$；那这时候其实就是通道的关联性度量了。<br>另外，可以想象的是，像素点关联矩阵的计算量是很大的，因此，为了减少计算量，论文有几个小技巧，一个是通道减半bottleneck操作，另一个是进行尺寸pooling降维。后面还有针对这个弊端提出的几篇论文，CCNet，GCNet等。<br><em>【看得出来，在卷积网络中应用也不是很复杂】</em></p>
+<h4 id="论文中的实验部分结果"><a href="#论文中的实验部分结果" class="headerlink" title="论文中的实验部分结果"></a>论文中的实验部分结果</h4><p><img src="/download/Non_Local/4.PNG" alt="4"></p>
+<p>实验部分比较足，主要是通过对比实验，如果想要用non-local block的话可以有所帮助，避免踩坑。</p>
+<ul>
+<li>第一个，四个相似度度量函数，哪个好？解释是，四个结果都差不多，说明主要是我们这个<strong>non-local</strong>的思想好，什么度量函数，什么激活函数，不是根本因素。</li>
+<li>第二个，放在哪里合适？ 结果显示，建议放在前面层，后面的层特征图中的空间信息被弱化，所以效果不如前面的好。</li>
+<li>第三个，几个<strong>non-local block</strong>合适？ 多了好一点，但是多了计算量太大了，trade-off下就5个吧。</li>
+<li>第四个，针对视频分类中的时间还是空间还是时空的注意力，三种对比实验。不解释</li>
+<li>第五个，针对baseline的改进，用了non-local，参数量差不多情况下，性能好。</li>
+<li>后面的不解释了，主要是针对baseline的改进</li>
+</ul>
+<h4 id="个人扩展"><a href="#个人扩展" class="headerlink" title="个人扩展"></a>个人扩展</h4><p><img src="/download/Non_Local/5.PNG" alt="5"></p>
+<p><strong>Non-local</strong>其实可以被认为是channel level和spatial level的泛化。这种方式通过注意力加强距离依赖，更是直接实现了全局的联系性。既有attention的思想也有context联系的思想。<br>基于这个non-local，后面相继又有几个网络结构提出来，本质还是做注意力机制，只不过操作不一样，或者是改进版的。像刚刚说的，CCNet， GCNet。可以看图。<br>另外，想说一点注意力的<strong>见解</strong><br>形如resnet alexnet等通用网络结构中，我们可以理解为空间或者通道间的所有位置，其重要性均等，即权重都为1。而注意力机制的根本目的，就是对原本平均分配的权重通过手动或者自学习的方式进行非等份分配。所以，从这个角度看，挂在嘴边的<strong>先验知识</strong>或是<strong>上下文关系（local， global， context）</strong>都可以理解为对原本等价权重的非等分配。在诸如SENet，CBAM中，通过网络训练的方式得到权重；而人为先验，是不是就是手动的权重分配，针对我们觉得重要的部分进行高权重赋值然后操作？</p>
+<h4 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h4><ul>
+<li>channel level， SENet   SKNet <a href="https://zhuanlan.zhihu.com/p/59690223" target="_blank" rel="external">博客</a></li>
+<li>spatial &amp; channel level：BAM和CBAM <a href="https://github.com/Jongchan/attention-module" target="_blank" rel="external">github代码</a> 双注意网络 <a href="https://zhuanlan.zhihu.com/p/54150694" target="_blank" rel="external">博客</a></li>
+<li>CCNet； 理解为对non-local的效率上的改善；由dense message passing变成了iterative sparse message passing。<a href="https://zhuanlan.zhihu.com/p/51393573" target="_blank" rel="external">博客</a></li>
+<li><a href="https://study.163.com/course/courseLearn.htm?courseId=1003223001#/learn/video?lessonId=1004255298&amp;courseId=1003223001" target="_blank" rel="external">网易cs231n课程关于attention的部分</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/注意力/" rel="tag"># 注意力</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/26/pytorch中的几个loss/" rel="next" title="pytorch中的几个loss">
+                <i class="fa fa-chevron-left"></i> pytorch中的几个loss
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/21/VPS的ubuntu上搭建v2ray服务端及客户端配置教程/" rel="prev" title="VPS的ubuntu上搭建v2ray服务端及客户端配置教程">
+                VPS的ubuntu上搭建v2ray服务端及客户端配置教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么提出Non-local？"><span class="nav-number">1.</span> <span class="nav-text">为什么提出Non-local？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Non-local-的思想和简单数学原理"><span class="nav-number">2.</span> <span class="nav-text">Non-local 的思想和简单数学原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Non-local在神经网络中的实现"><span class="nav-number">3.</span> <span class="nav-text">Non-local在神经网络中的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#论文中的实验部分结果"><span class="nav-number">4.</span> <span class="nav-text">论文中的实验部分结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#个人扩展"><span class="nav-number">5.</span> <span class="nav-text">个人扩展</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#附录"><span class="nav-number">6.</span> <span class="nav-text">附录</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

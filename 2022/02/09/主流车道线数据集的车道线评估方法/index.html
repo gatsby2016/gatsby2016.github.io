@@ -1,0 +1,998 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="车道线评估," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Tusimple数据 (point-based评估)
+车道线上点的accuracy及车道线的FP FN rate 评估代码
+
+基本思路模型预测输出车道线$L_{set}$，对于第$a$条车道线，我们按$y$值从大到小排序，假设为$L^{xy}_a=\{(x_0, y_0),…,(x_t, y_t)\}$；进行二次采样并输出y_sample$=\{Y_0,…, Y_k\}$下对应的$x$轴坐标$L^">
+<meta property="og:type" content="article">
+<meta property="og:title" content="主流车道线数据集的车道线评估方法">
+<meta property="og:url" content="http://blog.cyyan.cn/2022/02/09/主流车道线数据集的车道线评估方法/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="Tusimple数据 (point-based评估)
+车道线上点的accuracy及车道线的FP FN rate 评估代码
+
+基本思路模型预测输出车道线$L_{set}$，对于第$a$条车道线，我们按$y$值从大到小排序，假设为$L^{xy}_a=\{(x_0, y_0),…,(x_t, y_t)\}$；进行二次采样并输出y_sample$=\{Y_0,…, Y_k\}$下对应的$x$轴坐标$L^">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="主流车道线数据集的车道线评估方法">
+<meta name="twitter:description" content="Tusimple数据 (point-based评估)
+车道线上点的accuracy及车道线的FP FN rate 评估代码
+
+基本思路模型预测输出车道线$L_{set}$，对于第$a$条车道线，我们按$y$值从大到小排序，假设为$L^{xy}_a=\{(x_0, y_0),…,(x_t, y_t)\}$；进行二次采样并输出y_sample$=\{Y_0,…, Y_k\}$下对应的$x$轴坐标$L^">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2022/02/09/主流车道线数据集的车道线评估方法/"/>
+
+
+
+
+
+  <title> 主流车道线数据集的车道线评估方法 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2022/02/09/主流车道线数据集的车道线评估方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                主流车道线数据集的车道线评估方法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-02-09T14:47:52+00:00">
+                2022-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Tusimple数据-point-based评估"><a href="#Tusimple数据-point-based评估" class="headerlink" title="Tusimple数据 (point-based评估)"></a>Tusimple数据 (point-based评估)</h2><ul>
+<li>车道线上点的accuracy及车道线的FP FN rate <a href="https://github.com/TuSimple/tusimple-benchmark/blob/master/evaluate/lane.py#L23" target="_blank" rel="external">评估代码</a></li>
+</ul>
+<h3 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h3><p>模型预测输出车道线$L_{set}$，对于第$a$条车道线，我们按$y$值从大到小排序，假设为$L^{xy}_a=\{(x_0, y_0),…,(x_t, y_t)\}$；进行二次采样并输出<code>y_sample</code>$=\{Y_0,…, Y_k\}$下对应的$x$轴坐标$L^x_a = \{\dot{x}_0,…, \dot{x}_k\}$。确定所有预测车道线$L^x_{set}=\{L^x_0, …, L^x_n\}$，然后$L^x_{set}$与第$p$个GT车道线$L^{gt}_p$进行逐一比较，确定当前GT车道线$L^{gt}_p$的$\{acc^0_{p}, …, acc^n_{p}\}$。</p>
+<p>其中，当前图像上预测车道线数量为$n$。$L^{xy}_a$为初始预测的某一车道线。<code>y_sample</code>为Tusimple数据集预定义的$y$轴方向上的采样点集合，共有$k$个采样位置。二次采样方式可以是重采样或离散采样，根据$L^{xy}_a$确定。二次采样时，对于<code>y_sample</code>区间内，$\{y_0,…,y_t\}$区间未包含部分对应的$x$坐标置为$-2$。<strong>而$\{y_0,…,y_t\}$区间超过<code>y_sample</code>区间部分直接忽略不计</strong></p>
+<p><strong>PS:</strong> $L^{xy}_a$非必要，仅针对模型不按<code>y_sample</code>输出车道线点的情况。如果模型直接输出$L^x_a$则不需要二次采样。</p>
+<p>车道线$L^x_a$与第p个GT车道线$L^{gt}_p$计算$acc^a_{p}$过程：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">line_accuracy</span><span class="params">(pred, gt, thresh)</span>:</span> <span class="comment"># thresh阈值根据车道线斜率确定，斜率越大，thresh越大</span></div><div class="line">    pred = np.array([p <span class="keyword">if</span> p &gt;= <span class="number">0</span> <span class="keyword">else</span> <span class="number">-100</span> <span class="keyword">for</span> p <span class="keyword">in</span> pred])</div><div class="line">    gt = np.array([g <span class="keyword">if</span> g &gt;= <span class="number">0</span> <span class="keyword">else</span> <span class="number">-100</span> <span class="keyword">for</span> g <span class="keyword">in</span> gt])</div><div class="line">    <span class="keyword">return</span> np.sum(np.where(np.abs(pred - gt) &lt; thresh, <span class="number">1.</span>, <span class="number">0.</span>)) / len(gt)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>A point is correct when the difference between a ground-truth and predicted point is less than a certain threshold.</p>
+</blockquote>
+<p>进一步地，根据GT车道线$L^{gt}_p$与所有预测车道线的$\{acc^0_{p}, …, acc^n_{p}\}$确定最佳匹配，假设为$acc^a_{p}$，判断其是否大于<code>pt_thresh = 0.85</code>，进而确定<code>TP or FN +1</code>，单图像因此可以确定FN rate and FP rate(这里FP rate与通常定义的FP rate不一致)。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">fp, fn = <span class="number">0.</span>, <span class="number">0.</span></div><div class="line">matched = <span class="number">0.</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> x_gts, thresh <span class="keyword">in</span> zip(gt, threshs):</div><div class="line">    accs = [LaneEval.line_accuracy(np.array(x_preds), np.array(x_gts), thresh) <span class="keyword">for</span> x_preds <span class="keyword">in</span> pred]</div><div class="line"></div><div class="line">    max_acc = np.max(accs) <span class="keyword">if</span> len(accs) &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="number">0.</span></div><div class="line">    <span class="keyword">if</span> max_acc &lt; LaneEval.pt_thresh: <span class="comment"># pt_thresh = 0.85</span></div><div class="line">        fn += <span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        matched += <span class="number">1</span></div><div class="line"></div><div class="line">    line_accs.append(max_acc)</div><div class="line"></div><div class="line">fp = len(pred) - matched</div><div class="line"><span class="keyword">if</span> len(gt) &gt; <span class="number">4</span> <span class="keyword">and</span> fn &gt; <span class="number">0</span>:</div><div class="line">    fn -= <span class="number">1</span></div></pre></td></tr></table></figure>
+<p>最后，所有样本的mean(单图像上所有GT车道线的mean($\{acc^0_{p}, …, acc^n_{p}\}$))，作为整个数据的车道线点的accuracy。所有样本的mean(FP rate)和mean(FN rate)作为整个数据的车道线FP FN rate。</p>
+<blockquote>
+<p>All the three reported metrics reported as the average across all images of the average of each image.</p>
+</blockquote>
+<h2 id="CULane-and-CurveLanes数据-region-based评估"><a href="#CULane-and-CurveLanes数据-region-based评估" class="headerlink" title="CULane and CurveLanes数据 (region-based评估)"></a>CULane and CurveLanes数据 (region-based评估)</h2><ul>
+<li>车道线precision, recall and F1 score  <a href="https://github.com/XingangPan/SCNN/tree/master/tools/lane_evaluation" target="_blank" rel="external">评估代码</a></li>
+</ul>
+<h3 id="基本思路-1"><a href="#基本思路-1" class="headerlink" title="基本思路"></a>基本思路</h3><p>将单图像GT和预测车道线扩展为宽度为30的<code>线区域</code>，然后逐一计算pred和gt的IoU。<strong>进行最佳匹配。</strong> 判断其IoU大于某个阈值（定义0.3为loose、0.5为strict）视作一个TP，进而也确定FN及FP，对数据集内所有图像遍历并累积TP、FP、FN，最后确定整个数据的precision、recall、F1 score。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; &gt; similarity(anno_lanes.size(), <span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt;(detect_lanes.size(), <span class="number">0</span>));</div><div class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;anno_lanes.size(); i++)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">const</span> <span class="built_in">vector</span>&lt;Point2f&gt; &amp;curr_anno_lane = anno_lanes[i];</div><div class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;detect_lanes.size(); j++)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">const</span> <span class="built_in">vector</span>&lt;Point2f&gt; &amp;curr_detect_lane = detect_lanes[j];</div><div class="line">        similarity[i][j] = lane_compare-&gt;get_lane_similarity(curr_anno_lane, curr_detect_lane);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">double</span> LaneCompare::get_lane_similarity(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;Point2f&gt; &amp;lane1, <span class="keyword">const</span> <span class="built_in">vector</span>&lt;Point2f&gt; &amp;lane2)</div><div class="line">&#123;</div><div class="line">Mat im1 = Mat::zeros(im_height, im_width, CV_8UC1);</div><div class="line">Mat im2 = Mat::zeros(im_height, im_width, CV_8UC1);</div><div class="line"><span class="comment">// draw lines on im1 and im2</span></div><div class="line"></div><div class="line"><span class="comment">//......</span></div><div class="line"></div><div class="line">Scalar color_white = Scalar(<span class="number">1</span>);</div><div class="line"><span class="comment">//扩展点集为图像上'线区域'</span></div><div class="line"><span class="keyword">for</span>(<span class="keyword">int</span> n=<span class="number">0</span>; n&lt;p_interp1.size()<span class="number">-1</span>; n++)</div><div class="line">&#123;</div><div class="line">    line(im1, p_interp1[n], p_interp1[n+<span class="number">1</span>], color_white, lane_width);</div><div class="line">&#125;</div><div class="line"><span class="keyword">for</span>(<span class="keyword">int</span> n=<span class="number">0</span>; n&lt;p_interp2.size()<span class="number">-1</span>; n++)</div><div class="line">&#123;</div><div class="line">    line(im2, p_interp2[n], p_interp2[n+<span class="number">1</span>], color_white, lane_width);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//计算IoU</span></div><div class="line"><span class="keyword">double</span> sum_1 = cv::sum(im1).val[<span class="number">0</span>];</div><div class="line"><span class="keyword">double</span> sum_2 = cv::sum(im2).val[<span class="number">0</span>];</div><div class="line"><span class="keyword">double</span> inter_sum = cv::sum(im1.mul(im2)).val[<span class="number">0</span>];</div><div class="line"><span class="keyword">double</span> union_sum = sum_1 + sum_2 - inter_sum; </div><div class="line"><span class="keyword">double</span> iou = inter_sum / union_sum;</div><div class="line"><span class="keyword">return</span> iou;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>逐图像累积TP、FP、FN数量，并计算整个数据指标<br><figure class="highlight c++"><table><tr><td class="code"><pre><div class="line"><span class="keyword">long</span> tp = <span class="number">0</span>, fp = <span class="number">0</span>, tn = <span class="number">0</span>, fn = <span class="number">0</span>;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> result: tuple_lists) </div><div class="line">&#123;</div><div class="line">tp += get&lt;<span class="number">1</span>&gt;(result);</div><div class="line">fp += get&lt;<span class="number">2</span>&gt;(result);</div><div class="line"><span class="comment">// tn = get&lt;3&gt;(result);</span></div><div class="line">fn += get&lt;<span class="number">4</span>&gt;(result);</div><div class="line">&#125;</div><div class="line"></div><div class="line">counter.setTP(tp);</div><div class="line">counter.setFP(fp);</div><div class="line">counter.setFN(fn);</div><div class="line"></div><div class="line"><span class="keyword">double</span> precision = counter.get_precision();</div><div class="line"><span class="keyword">double</span> recall = counter.get_recall();</div><div class="line"><span class="keyword">double</span> F = <span class="number">2</span> * precision * recall / (precision + recall);</div></pre></td></tr></table></figure></p>
+<h2 id="VIL-100数据"><a href="#VIL-100数据" class="headerlink" title="VIL-100数据"></a>VIL-100数据</h2><ul>
+<li>综合上述point-based和region-based的评估指标</li>
+</ul>
+<h2 id="一篇论文-2014"><a href="#一篇论文-2014" class="headerlink" title="一篇论文[2014]"></a>一篇论文[2014]</h2><ul>
+<li><a href="http://ieeexplore.ieee.org/document/6977166" target="_blank" rel="external">On Performance Evaluation Metrics for Lane Estimation</a></li>
+</ul>
+<p>针对单车道线$L$而言，<strong>lane position deviation (LPD)</strong>: 定义为在y轴方向的$y_{min}$到$y_{max}$区间范围内等间隔$N$采样，每一采样点处$x$坐标偏差$\delta$在所有采样点处的累计和。</p>
+<script type="math/tex; mode=display">
+\delta_{LPD}=\frac{1}{y_{max}-y_{min}} \sum_{y=y_{min}}^{y_{max}} \delta_{y}</script><h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>车道线的评估本质上是线段的比对和匹配问题。其实就五步：</p>
+<ol>
+<li>比对单个GT线和单一预测线，这时候比对可以是基于offset或者基于IoU或者直接用阈值指示函数；</li>
+<li>遍历所有预测线；</li>
+<li>找该GT线的最佳匹配，并基于某个限定条件确定TP or FN；</li>
+<li>按上述遍历所有GT线；</li>
+<li>确定所有TP FN进而确定整个数据TP and FN and FP，进而确定最终指标（或者也可以不加限定条件，直接根据最近匹配值作为最终指标）。</li>
+</ol>
+<p>但是，一个可能的边界情况是：GT线$L^{gt}_p$最佳匹配是预测车道线$L^{pred}_s$，下一个GT线$L^{gt}_q$最佳匹配也是预测车道线$L^{pred}_s$；假设都满足限定条件，$TP+2?$<br>所以，最佳匹配也需要是唯一匹配。$L^{pred}_s$一旦成为$L^{gt}_p$的满足限定条件的最佳匹配，$TP+1$的同时也应该$L^{pred}.pop(s)$。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/车道线评估/" rel="tag"># 车道线评估</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/01/09/说废话的几点原因/" rel="next" title="说废话的几点原因">
+                <i class="fa fa-chevron-left"></i> 说废话的几点原因
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/20/Thesis-for-my-master-degree/" rel="prev" title="Thesis for my master degree">
+                Thesis for my master degree <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Tusimple数据-point-based评估"><span class="nav-number">1.</span> <span class="nav-text">Tusimple数据 (point-based评估)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本思路"><span class="nav-number">1.1.</span> <span class="nav-text">基本思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CULane-and-CurveLanes数据-region-based评估"><span class="nav-number">2.</span> <span class="nav-text">CULane and CurveLanes数据 (region-based评估)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本思路-1"><span class="nav-number">2.1.</span> <span class="nav-text">基本思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VIL-100数据"><span class="nav-number">3.</span> <span class="nav-text">VIL-100数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一篇论文-2014"><span class="nav-number">4.</span> <span class="nav-text">一篇论文[2014]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写在最后"><span class="nav-number">5.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="theory," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="开门见山，直接给答案：矩阵乘法的本质是线性空间运动的描述！为了解释清楚这个问题，我们需要补充一些线性代数学习过程中被忽略的基础知识。文章较长，大致分为两个部分。第一部分介绍线性代数里面最基础的部分：空间、坐标系和坐标。第二部分揭示矩阵乘法的本质。基础较好可以直接跳到第二部分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="矩阵相乘的本质是什么(转)">
+<meta property="og:url" content="http://blog.cyyan.cn/2017/10/26/矩阵相乘的本质是什么/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="开门见山，直接给答案：矩阵乘法的本质是线性空间运动的描述！为了解释清楚这个问题，我们需要补充一些线性代数学习过程中被忽略的基础知识。文章较长，大致分为两个部分。第一部分介绍线性代数里面最基础的部分：空间、坐标系和坐标。第二部分揭示矩阵乘法的本质。基础较好可以直接跳到第二部分。">
+<meta property="og:image" content="http://ox4hr87qc.bkt.clouddn.com/maths.jpg">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="矩阵相乘的本质是什么(转)">
+<meta name="twitter:description" content="开门见山，直接给答案：矩阵乘法的本质是线性空间运动的描述！为了解释清楚这个问题，我们需要补充一些线性代数学习过程中被忽略的基础知识。文章较长，大致分为两个部分。第一部分介绍线性代数里面最基础的部分：空间、坐标系和坐标。第二部分揭示矩阵乘法的本质。基础较好可以直接跳到第二部分。">
+<meta name="twitter:image" content="http://ox4hr87qc.bkt.clouddn.com/maths.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2017/10/26/矩阵相乘的本质是什么/"/>
+
+
+
+
+
+  <title> 矩阵相乘的本质是什么(转) | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2017/10/26/矩阵相乘的本质是什么/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                矩阵相乘的本质是什么(转)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-26T00:59:10+00:00">
+                2017-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Maths/" itemprop="url" rel="index">
+                    <span itemprop="name">Maths</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>开门见山，直接给答案：矩阵乘法的本质是线性空间运动的描述！为了解释清楚这个问题，我们需要补充一些线性代数学习过程中被忽略的基础知识。文章较长，大致分为两个部分。第一部分介绍线性代数里面最基础的部分：空间、坐标系和坐标。第二部分揭示矩阵乘法的本质。基础较好可以直接跳到第二部分。</strong></p>
+<a id="more"></a>
+<h3 id="第一部分，空间与坐标系的建立"><a href="#第一部分，空间与坐标系的建立" class="headerlink" title="第一部分，空间与坐标系的建立"></a>第一部分，空间与坐标系的建立</h3><p>首先，线性代数里面的线性主要的意思就是线性空间里的线性变换。线性变换或线性映射是把中学的线性函数概念进行了重新定义，强调了函数的变量之间的变换的意义。线性函数的概念在初等数学和高等数学中含义不尽相同（高等数学常常把初等数学的关键概念进行推广或进一步抽象化，初等数学的概念就变成了高等数学概念的一个特例）。</p>
+<p>在中学的初等数学里，我们知道，函数<code>f(x)=kx+b（k和b是不变量）</code>，称为一元线性函数，因为在平面直角坐标系中这个函数的图形就是一条直线，就是变量（包括自变量和因变量）之间的关系描述为一条直线，所以把这种函数形象地称为“线性”函数；如果<code>b=0</code>，这个函数的外观就变成<code>f(x)=kx</code>的形式了，这是一条过原点的直线。显然，过原点的直线是最简单的线性函数。</p>
+<p>在大学的代数里面，为了线性函数的进一步推广（如推广至双线性函数、多线性函数、线性空间、线性泛函…）的远大未来，我们忍痛割“尾”，把一元线性函数<code>f(x)= kx + b</code>的b割舍掉，成了<code>f(x)=kx</code>的形式。呵呵，简单点说，只有过原点的最简单的直线<code>f(x)= kx</code>才被称为一元线性函数。</p>
+<p>为什么？只因为不过原点的直线不满足我们对线性函数的比例性的要求。</p>
+<p>线性函数表现为直线，这只是几何意义。那么所谓“线性”的代数意义是什么呢？实际上，最基本的意义只有两条：可加性和比例性。用数学的表达来说就是：对加法和数乘封闭。</p>
+<p>然后说说空间(space)，这个概念是现代数学的命根子之一。对于空间的理解需要更抽象一些，简单的说，能装东西的就是空间。比如计算机内有存储单元，那么就有内存空间；我们上课有课表，那么就有课表空间；有一个能装载梦境的东西，我们可以叫它盗梦空间。对于数学来说，数学家定义的空间里装载的当然是能运算的东西。从拓扑空间开始，一步步往上加定义，可以形成很多空间。线形空间其实还是比较初级的，如果在里面定义了范数，就成了赋范线性空间。赋范线性空间满足完备性，就成了巴那赫空间；赋范线性空间中定义角度，就有了内积空间，内积空间再满足完备性，就得到希尔伯特空间，如果空间里装载所有类型的函数，就叫泛函空间。</p>
+<p>总之，空间有很多种。你要是去看某种空间的数学定义，大致都是“存在一个集合，在这个集合上定义某某概念，然后满足某些性质”，就可以被称为空间。这未免有点奇怪，为什么要用“空间”来称呼一些这样的集合呢？大家将会看到，其实这是很有道理的。</p>
+<p>我们一般人最熟悉的空间，毫无疑问就是我们生活在其中的（按照牛顿的绝对时空观）的三维空间，从数学上说，这是一个三维的欧几里德空间，我们先不管那么多，先看看我们熟悉的这样一个空间有些什么最基本的特点。仔细想想我们就会知道，这个三维的空间：</p>
+<ul>
+<li>由很多（实际上是无穷多个）位置点组成</li>
+<li>这些点之间存在相对的关系</li>
+<li>可以在空间中定义长度、角度</li>
+<li>这个空间可以容纳运动</li>
+</ul>
+<p>上面的这些性质中，最最关键的是第4条。这里我们所说的运动是从一个点到另一个点的移动（变换），而不是微积分意义上的“连续”性的运动。第1、2条只能说是空间的基础，不算是空间特有的性质，凡是讨论数学问题，都得有一个集合，大多数还得在这个集合上定义一些结构或关系，并不是说有了这些就算是空间。而第3条太特殊，其他的空间不需要具备，更不是关键的性质。只有第4条是空间的本质，也就是说：容纳运动是空间的本质特征。</p>
+<p>认识到了这些，我们就可以把我们关于三维空间的认识扩展到其他的空间。事实上，不管是什么空间，都必须容纳和支持在其中发生的符合规则的运动（变换）。你会发现，在某种空间中往往会存在一种相对应的变换，比如拓扑空间中有拓扑变换，线性空间中有线性变换，仿射空间中有仿射变换，其实这些变换都只不过是对应空间中允许的运动形式而已。因此只要知道，“空间”是容纳运动的一个对象集合，而变换则规定了对应空间的运动。</p>
+<p>下面我们来看看线性空间。线性空间的定义任何一本书上都有，但是既然我们承认线性空间是个空间，那么有两个最基本的问题必须首先得到解决，那就是：</p>
+<ul>
+<li><p>空间是一个对象集合，线性空间也是空间，所以也是一个对象集合。那么线性空间是什么样的对象的集合？或者说，线性空间中的对象有什么共同点吗？</p>
+</li>
+<li><p>线性空间中的运动如何表述的？也就是，线性变换是如何表示的？</p>
+</li>
+</ul>
+<p>我们先来回答第一个问题，回答这个问题的时候其实是不用拐弯抹角的，可以直截了当的给出答案。线性空间中的任何一个对象，通过选取坐标系(基)和坐标的办法，都可以表达为向量的形式。只要你找到合适的坐标轴（也就是基），就建立了一个坐标系，就可以用坐标（表示成向量的形式）表示线性空间里任何一个对象。换句话说，给你一个空间，你就能用基和坐标来描述这个空间中的对象！这里头大有文章，因为向量表面上只是一列数，但是由于向量的有序性，除了这些数本身携带的信息之外，还在对应位置上携带信息。为什么在程序设计中数组最简单，却又威力无穷呢？根本原因就在于此。</p>
+<p>由三维扩展到四维的空间的确难以想象，我想给出个人的几点认识供读者参考：对于笛卡儿坐标系，二维坐标系的两个坐标轴互相正交并构成一个平面空间；三维坐标系的坐标轴互相正交且第三个坐标轴垂直于其余两个坐标轴平面，三个坐标轴构成一个立体空间；则四维坐标系中的四个坐标轴互相正交，第四轴必然与其余的三维立体空间垂直，四个坐标轴构成一个超多面体空间…</p>
+<p>四维空间的物理解释就是爱因斯坦的时空理论，三维物理空间之外增加了一个与之垂直的时间轴（垂直或正交的意思应理解为不相关，时间和空间在低于光速的尺度内就是没有关系的两个事物，这就是牛顿的世界）。你，作为一个有生命周期的高级动物实际上是个四维动物，因为你的肉体既占有了一个三维小空间同时又占有了另外一维的时间轴上的一段。N 维空间的出现实际上是人们在抽象他所观察到的宇宙事物时出现的概念。</p>
+<p>实际上，在以后的线性代数学习中，坐标轴的正交不是必须的，取消了正交的要求后，我们在平面上就可以画出来大于四维以上的空间来了，你就理解了由n 个向量张成的n个空间的理论，进而想象高维空间的图像也就不是一个困难的事情了。</p>
+<p>如果有一个线性空间，就能建立一个坐标系，选取一组基和坐标来描述这个空间里的对象。举一个通俗一点的例子，我们学习的教室就是一个空间，先定义它为“教室空间”好了，教室空间中有桌子、椅子、黑板、粉笔、黑板擦，为了说明问题我们就先假设只有这几样东西。那么我们怎么描述这个空间呢？选取基和坐标对吧：根据我们对空间中基的要求：完备性和无关性，我们选取的“坐标轴”为{桌子、椅子、黑板、粉笔、黑板擦}，基的维数是5维的。那么坐标怎么选取呢？坐标就是每件东西的数量，有了基和坐标，我们就能描述我们定义的“教室空间”了，就是这么简单。再举一个例子，鸡兔同笼的问题大家应该都听过，这里也可以定义一个空间，暂且取名“笼子空间”吧，在笼子空间中，“坐标轴”就是{鸡的两只脚和一个头，兔的四只脚和一个头}，基的维数是2维的。坐标就是鸡和兔的数目。再回头观察我们的“笼子空间”和“教室空间”，我们发现教室空间里面的基彼此不包含彼此，具体来说就是桌子不包含椅子的成分，粉笔不包含黑板的成分，我们说基彼此正交。而笼子空间中的两个基都有头和脚，但彼此不能线性表示对方。这时，基就不是正交的。下面回到我们线性代数中的线性空间。线性空间里面装的都是向量。那么这组基怎么选取呢？我们知道，线性空间里的基本对象是向量，所以，基一定也是向量。但有一些要求：对基的要求是数量要够，还要线性无关。</p>
+<p>总结一下：我们首先确立一个叫空间的东西，空间里面装着要研究的对象，比如“教室空间”。为了描述对象和对象的运动，就要选取空间中最基本的元素作为基，把基前面的系数叫做坐标，于是建立了坐标系和坐标。注意：“坐标轴”，也就是基，可以是桌子椅子等任何东西，只是在线性代数中我们把基选成了向量。世界是物质的，物质是运动的，接下来肯定要研究一下线性空间中的运动是怎么实现的。</p>
+<h3 id="第二部分，矩阵乘法描述运动"><a href="#第二部分，矩阵乘法描述运动" class="headerlink" title="第二部分，矩阵乘法描述运动"></a>第二部分，矩阵乘法描述运动</h3><p>线性空间中的运动，被称为线性变换。也就是说，你从线性空间中的一个点运动到任意的另外一个点，都可以通过一个线性变化来完成。那么，线性变换如何表示呢？很有意思，在线性空间中，当你选定一组基之后，不仅可以用一个向量来描述空间中的任何一个对象，而且可以用矩阵乘法来描述该空间中的任何一个运动（变换）。而使某个对象发生对应运动的方法，就是用代表那个运动的矩阵，乘以代表那个对象的向量。</p>
+<p>简而言之，在线性空间中选定基之后，向量（坐标）刻画对象，矩阵刻画对象的运动，用矩阵与向量的乘法施加运动。</p>
+<p>如果以后有人问你矩阵乘法是什么，那么你就可以响亮地告诉他，矩阵乘法的本质是运动的施加。到现在为止，好像大家都还没什么意见。但是我相信早晚会有数学系出身的网友来拍板转。因为运动这个概念，在数学和物理里是跟微积分联系在一起的。我们学习微积分的时候，总会有人照本宣科地告诉你，初等数学是研究常量的数学，是研究静态的数学，高等数学是变量的数学，是研究运动的数学。大家口口相传，差不多人人都知道这句话。但是真知道这句话说的是什么意思的人，好像也不多。简而言之，在我们人类的经验里，运动是一个连续过程，从A点到B点，就算走得最快的光，也是需要一个时间来逐点地经过AB之间的路径，这就带来了连续性的概念。而连续这个事情，如果不定义极限的概念，根本就解释不了。古希腊人的数学非常强，但就是缺乏极限观念，所以解释不了运动，被芝诺的那些著名悖论（飞箭不动、飞毛腿阿喀琉斯跑不过乌龟等四个悖论）搞得死去活来。因为这篇文章不是讲微积分的，所以我就不多说了。有兴趣的读者可以去看看齐民友教授写的《重温微积分》。我就是读了这本书开头的部分，才明白“高等数学是研究运动的数学”这句话的道理。</p>
+<p>不过在这个文章里，“运动”的概念不是微积分中的连续性的运动，而是瞬间发生的变化。比如这个时刻在A点，经过一个“运动”，一下子就“跃迁”到了B点，其中不需要经过A点与B点之间的任何一个点。这样的“运动”，或者说“跃迁”，是违反我们日常的经验的。不过了解一点量子物理常识的人，就会立刻指出，量子（例如电子）在不同的能量级轨道上跳跃，就是瞬间发生的，具有这样一种跃迁行为。所以说，自然界中并不是没有这种运动现象，只不过宏观上我们观察不到。但是不管怎么说，“运动”这个词用在这里，还是容易产生歧义的，说得更确切些，应该是“跃迁”。因此这句话可以改成：“矩阵乘法是线性空间里跃迁的描述”。</p>
+<p>可是这样说又太物理，也就是说太具体，而不够数学，也就是说不够抽象。因此我们最后换用一个正牌的数学术语——变换，来描述这个事情。这样一说，大家就应该明白了，所谓变换，其实就是空间里从一个点（元素/对象）到另一个点（元素/对象）的跃迁。比如说，拓扑变换，就是在拓扑空间里从一个点到另一个点的跃迁。再比如说，仿射变换，就是在仿射空间里从一个点到另一个点的跃迁。附带说一下，这个仿射空间跟向量空间是亲兄弟。做计算机图形学的朋友都知道，尽管描述一个三维对象只需要三维向量，但所有的计算机图形学变换矩阵都是4 x 4的。说其原因，很多书上都写着“为了使用中方便”，这在我看来简直就是企图蒙混过关。真正的原因，是因为在计算机图形学里应用的图形变换，实际上是在仿射空间而不是向量空间中进行的。想想看，在向量空间里相一个向量平行移动以后仍是相同的那个向量，而现实世界等长的两个平行线段当然不能被认为同一个东西，所以计算机图形学的生存空间实际上是仿射空间。而仿射变换的矩阵表示根本就是4 x 4的。又扯远了，有兴趣的读者可以去看《计算机图形学——几何工具算法详解》。</p>
+<p>一旦我们理解了“变换”这个概念，矩阵乘法就变成：“矩阵乘法是线性空间里的变换的描述。”到这里为止，我们终于得到了一个看上去比较数学的定义。不过还要多说几句。教材上一般是这么说的，在一个线性空间V里的一个线性变换T，当选定一组基之后，就可以表示为矩阵。线性变换的定义是很简单的，<code>设有一种变换T，使得对于线性空间V中间任何两个不相同的对象x和y，以及任意实数a和b，有：T(ax + by) = aT(x) + bT(y)，那么就称T为线性变换</code>。</p>
+<p>定义都是这么写的，但是光看定义还得不到直觉的理解。线性变换究竟是一种什么样的变换？我们刚才说了，变换是从空间的一个点跃迁到另一个点，而线性变换，就是从一个线性空间V的某一个点跃迁到另一个线性空间V的另一个点的运动。这句话里蕴含着一层意思，就是说一个点不仅可以变换到同一个线性空间中的另一个点，而且可以变换到另一个线性空间中的另一个点去。不管你怎么变，只要变换前后都是线性空间中的对象，这个变换就一定是线性变换，也就一定可以用一个矩阵来描述。最后我们把矩阵乘法定义完善如下：</p>
+<p>“矩阵乘法是线性空间中的线性变换的一个描述。在一个线性空间中，只要我们选定一组基，那么对于任何一个线性变换，都能够用一个确定的矩阵乘法来加以描述。”</p>
+<p>见下图：<br><img src="http://ox4hr87qc.bkt.clouddn.com/maths.jpg" alt="img"></p>
+<p>对于矩阵乘法，主要是考察一个矩阵对另一个矩阵所起的变换作用。其作用的矩阵看作是动作矩阵，被作用的矩阵可以看作是由行或列向量构成的几何图形。同样，如果一连串的矩阵相乘，就是多次变换的叠加么。而矩阵左乘无非是把一个向量或一组向量（即另一个矩阵）进行伸缩或旋转。乘积的效果就是多个伸缩和旋转的叠加！比如<code>S=ABCDEF</code>会把所有的矩阵线性变化的作用力传递并积累下去，最终得到一个和作用力S。工业上的例子就是机器人的手臂，机械臂上的每个关节就是一个矩阵（比如可以是一个旋转矩阵），机械臂末端的位置或动作是所有关节运动的综合效果。这个综合效果可以用旋转矩阵的乘法得到。</p>
+<p><strong>本文是在整理孟岩老师的《理解矩阵》和任广千、胡翠芳老师的《线性代数的几何意义》基础上形成的，只是出于一种对数学的爱好！有兴趣的读者建议阅读原文。也欢迎下载《神奇的矩阵》和《神奇的矩阵第二季》最新版本了解更多有关线性代数和矩阵的知识。</strong></p>
+<blockquote>
+<p>再次感谢author阿狸，原文链接：<a href="https://www.zhihu.com/question/21351965/answer/176777987" target="_blank" rel="external">https://www.zhihu.com/question/21351965/answer/176777987</a><br>来源：知乎<br>著作权归作者所有，转载请联系作者获得授权。</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/theory/" rel="tag"># theory</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/30/github+hexo+阿里云搭建个人博客/" rel="next" title="github+hexo+阿里云搭建个人博客">
+                <i class="fa fa-chevron-left"></i> github+hexo+阿里云搭建个人博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/12/十一月的前奏/" rel="prev" title="十一月的前奏">
+                十一月的前奏 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一部分，空间与坐标系的建立"><span class="nav-number">1.</span> <span class="nav-text">第一部分，空间与坐标系的建立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二部分，矩阵乘法描述运动"><span class="nav-number">2.</span> <span class="nav-text">第二部分，矩阵乘法描述运动</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1012 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="pytorch,反向传播autograd," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="本人在GITHUB上发布了CAM和GradCAM注意力可视化方法以及 FeatureExtractor特征提取特征可视化方法。欢迎star和fork。
+
+autograd机制参考:pytorch docs
+在pytorch中，autograd是由计算图实现的。如果一个操作有一个输入需要梯度，那么它的输出也需要梯度。相反，只有当所有输入都不需要梯度时，输出才会不需要梯度。在所有张量都不需要梯度的子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch的反向传播及求导机制相关">
+<meta property="og:url" content="http://blog.cyyan.cn/2019/12/25/pytorch的反向传播及求导机制相关/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="本人在GITHUB上发布了CAM和GradCAM注意力可视化方法以及 FeatureExtractor特征提取特征可视化方法。欢迎star和fork。
+
+autograd机制参考:pytorch docs
+在pytorch中，autograd是由计算图实现的。如果一个操作有一个输入需要梯度，那么它的输出也需要梯度。相反，只有当所有输入都不需要梯度时，输出才会不需要梯度。在所有张量都不需要梯度的子">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pytorch的反向传播及求导机制相关">
+<meta name="twitter:description" content="本人在GITHUB上发布了CAM和GradCAM注意力可视化方法以及 FeatureExtractor特征提取特征可视化方法。欢迎star和fork。
+
+autograd机制参考:pytorch docs
+在pytorch中，autograd是由计算图实现的。如果一个操作有一个输入需要梯度，那么它的输出也需要梯度。相反，只有当所有输入都不需要梯度时，输出才会不需要梯度。在所有张量都不需要梯度的子">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2019/12/25/pytorch的反向传播及求导机制相关/"/>
+
+
+
+
+
+  <title> pytorch的反向传播及求导机制相关 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2019/12/25/pytorch的反向传播及求导机制相关/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                pytorch的反向传播及求导机制相关
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-25T14:11:47+00:00">
+                2019-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pytorch/" itemprop="url" rel="index">
+                    <span itemprop="name">pytorch</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本人在<a href="https://github.com/gatsby2016/FeatsVisDL" target="_blank" rel="external">GITHUB</a>上发布了CAM和GradCAM注意力可视化方法以及 FeatureExtractor特征提取特征可视化方法。欢迎star和fork。</p>
+</blockquote>
+<h3 id="autograd机制"><a href="#autograd机制" class="headerlink" title="autograd机制"></a>autograd机制</h3><p><a href="https://pytorch.org/docs/stable/notes/autograd.html" target="_blank" rel="external">参考:pytorch docs</a></p>
+<p>在pytorch中，autograd是由计算图实现的。<br>如果一个操作有一个输入需要梯度，那么它的输出也需要梯度。相反，只有当所有输入都不需要梯度时，输出才会不需要梯度。在所有张量都不需要梯度的子图中，不会执行反向梯度计算。<br>如此，对每个tensor的<code>requires_grad</code>flag置false可以使其从计算图中排除，减少非必要tensor的梯度计算，以提高效率。<br>因此，当你想冻结你的模型的一部分，或者你事先知道你不打算使用一些参数的梯度的时候，这是特别有用的。例如，如果你想微调一个预先训练好的CNN，在冻结的基础上将<code>requires_grad</code>置为false就足够了，并且不会保存中间缓冲区，直到计算到达最后一层你需要优化的参数权重，才将需要梯度。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line">model = torchvision.models.resnet18(pretrained=<span class="keyword">True</span>)</div><div class="line"><span class="keyword">for</span> param <span class="keyword">in</span> model.parameters():</div><div class="line">    param.requires_grad = <span class="keyword">False</span></div><div class="line"><span class="comment"># Replace the last fully-connected layer</span></div><div class="line"><span class="comment"># Parameters of newly constructed modules have requires_grad=True by default</span></div><div class="line">model.fc = nn.Linear(<span class="number">512</span>, <span class="number">100</span>)</div><div class="line"></div><div class="line"><span class="comment"># Optimize only the classifier</span></div><div class="line">optimizer = optim.SGD(model.fc.parameters(), lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</div></pre></td></tr></table></figure></p>
+<p><strong>注意：</strong>神经网络的全连接层卷积层等结构的参数都是默认需要梯度的，而用<code>torch.tensor([1.,2.,3.])</code>得到的tensor默认是不需要梯度的，但可以通过<code>torch.tensor([1.,2.,3.], requires_grad = True)</code>显式指定。注意的是，此时的<code>[1., 2., 3.]</code>只能是浮点数，不能是整数。</p>
+<h4 id="关于计算图"><a href="#关于计算图" class="headerlink" title="关于计算图"></a>关于计算图</h4><p><a href="http://www.imooc.com/article/282785" target="_blank" rel="external">参考:手把手教你使用PyTorch</a></p>
+<p>从PyTorch的设计原理上来说，在每次进行前向计算得到pred时，会产生一个用于梯度回传的计算图，这张图储存了进行反向传播需要的中间结果，这张计算图保存了计算的相关历史和提取计算所需的所有信息。只有调用了<code>xx.backward()</code>后，它才会从内存中被释放。为了理解，给出multi-task任务一个标准的流程：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># http://www.imooc.com/article/282785</span></div><div class="line"><span class="keyword">for</span> idx, data <span class="keyword">in</span> enumerate(train_loader):</div><div class="line">    xs, ys = data</div><div class="line">    </div><div class="line">    optmizer.zero_grad()</div><div class="line">    <span class="comment"># 计算d(l1)/d(x)</span></div><div class="line">    pred1 = model1(xs) <span class="comment">#生成graph1</span></div><div class="line">    loss1 = loss_fn1(pred1, ys)</div><div class="line">    loss1.backward()  <span class="comment">#释放graph1</span></div><div class="line">    <span class="comment"># 计算d(l2)/d(x)</span></div><div class="line">    pred2 = model2(xs)<span class="comment">#生成graph2</span></div><div class="line">    loss2 = loss_fn2(pred2, ys)</div><div class="line">    loss2.backward()  <span class="comment">#释放graph2</span></div><div class="line"></div><div class="line">    <span class="comment"># 使用d(l1)/d(x)+d(l2)/d(x)进行优化</span></div><div class="line">    optmizer.step()</div></pre></td></tr></table></figure></p>
+<p>其中，<code>optmizer.zero_grad()</code>用于在计算梯度之前将需要梯度的tensor的梯度置零，否则会出现梯度随iteration不断累加的情况。<code>loss.backward()</code>用于得到关于<code>loss</code>的所有梯度保存在对应的tensor中，同时释放计算图，最后<code>optmizer.step()</code>进行一次梯度更新。<br>这里，因为是多任务，所以每一iteration只进行一次梯度置零，两次梯度计算，一次梯度更新。如此被累加的梯度的更新实现了多任务学习，而且不会导致多个分支同时保留计算图，占用过多显存。<br>关于梯度累加的思想可以<a href="https://www.cnblogs.com/lart/p/11628696.html" target="_blank" rel="external">参考:PyTorch中的梯度累加</a>。用<code>optimizer.zero_grad()</code>玩出花样!</p>
+<h3 id="临时关闭求导with-torch-no-grad"><a href="#临时关闭求导with-torch-no-grad" class="headerlink" title="临时关闭求导with torch.no_grad()"></a>临时关闭求导<code>with torch.no_grad()</code></h3><p><a href="https://zhuanlan.zhihu.com/p/67184419" target="_blank" rel="external">参考:浅谈 PyTorch 中的 tensor 及使用</a></p>
+<p>我们在训练时前向传播得到pred和保留的计算图，然后反向传播得到梯度。但测试的时候，对于输入数据，我们只需要前向传播得到pred，因此不需要<code>backward()</code>进行反向传播，更不需要保留计算图来进行梯度回传。因此可以将前向传播代码放在<code>with torch.no_grad()</code>下，不保留计算图，从而大大地减少显存使用率。<br>一个简单的示例：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.randn(<span class="number">3</span>, requires_grad = <span class="keyword">True</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(x.requires_grad)</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print((x ** <span class="number">2</span>).requires_grad)</div><div class="line"><span class="keyword">True</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">with</span> torch.no_grad():</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>    print((x ** <span class="number">2</span>).requires_grad)</div><div class="line"><span class="keyword">False</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print((x ** <span class="number">2</span>).requires_grad)</div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure></p>
+<h3 id="in-place-原地操作"><a href="#in-place-原地操作" class="headerlink" title="in-place 原地操作"></a>in-place 原地操作</h3><p><a href="https://blog.csdn.net/qq_38163755/article/details/87905524" target="_blank" rel="external">参考:PyTorch中in-place</a></p>
+<p>in-place运算指改变一个tensor的值的时候，直接在原始内存空间上进行值的改变，不经过复制操作。<br>一般以后缀表示原地操作，如<code>add_()</code>或者 <code>+=</code>。<br>由于pytorch中参数的求导在计算图中进行，因此，一旦在原始内存中修改了数据，则需要重写计算图，所以绝大多数情况不推荐使用in-place操作。</p>
+<h3 id="detach-与-data"><a href="#detach-与-data" class="headerlink" title="detach() 与 data()"></a>detach() 与 data()</h3><p><code>detach()</code>和<code>data()</code>都是从计算图中得到一个新的相同的tensor，和原始的数据共享内存空间，但requires_grad为False。而一旦对新的tensor进行赋值等操作，会同样改变原始tensor的值。<br><code>detach()</code>和<code>data()</code>方式得到的新的tensor值被改变后，都会相应改变原始的tensor的值，造成原始tensor反向传播不能求导的情况。但是！不同的是，<code>detach()</code>会以<code>RuntimeError</code>报错，而<code>data()</code>却不会报错，但得到的$grad$也是错的！<br>具体理解可以看下面的例子：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># 使用detach()</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.tensor([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3.</span>], requires_grad = <span class="keyword">True</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out = a.sigmoid()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c = out.detach()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c.zero_()  </div><div class="line">tensor([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>])</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out  <span class="comment"># modified by c.zero_() !!</span></div><div class="line">tensor([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>])</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out.sum().backward()  <span class="comment"># Requires the original value of out, but that was overwritten by c.zero_()</span></div><div class="line">RuntimeError: one of the variables needed <span class="keyword">for</span> gradient computation has been modified by an inplace operation</div></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># 使用data()</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.tensor([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3.</span>], requires_grad = <span class="keyword">True</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out = a.sigmoid()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c = out.data</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>c.zero_()</div><div class="line">tensor([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>])</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out  <span class="comment"># out  was modified by c.zero_()</span></div><div class="line">tensor([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>])</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>out.sum().backward()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.grad  <span class="comment"># The result is very, very wrong because `out` changed!</span></div><div class="line">tensor([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>])</div></pre></td></tr></table></figure>
+<p>因此，日常取用计算图中的tensor推荐使用<code>detach()</code>，不建议<code>data()</code>，这样出现问题的时候能够及时报错。<br>当然，还有一种特殊的情况，<code>detach()</code>后进行原地操作再梯度计算不会导致<code>RuntimeError</code>报错，可以<a href="https://zhuanlan.zhihu.com/p/83329768" target="_blank" rel="external">参考:pytorch中的detach和data</a></p>
+<p><strong>注意</strong>：之前的版本中，对新tensor进行<code>resize_ / resize_as_ / set_ / transpose_</code>原地操作也同样会改变原始tensor。而新的版本中，对新tensor进行<code>resize_ / resize_as_ / set_ / transpose_</code>原地操作不会改变原始tensor，反而会报错。</p>
+<h3 id="item-与tolist"><a href="#item-与tolist" class="headerlink" title="item()与tolist()"></a>item()与tolist()</h3><p><code>tensor.item()</code>以标准python数字的形式返回tensor的值，只适用于只有一个元素的tensor。其他情况，使用<code>tensor.tolist()</code>返回python list。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x = torch.tensor([<span class="number">1.0</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x.item()</div><div class="line"><span class="number">1.0</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a = torch.rand(<span class="number">2</span>,<span class="number">2</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.tolist()</div><div class="line">[[<span class="number">0.33648067712783813</span>, <span class="number">0.29370278120040894</span>], [<span class="number">0.28659379482269287</span>, <span class="number">0.07816547155380249</span>]]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.cuda()</div><div class="line">tensor([[<span class="number">0.3365</span>, <span class="number">0.2937</span>],</div><div class="line">        [<span class="number">0.2866</span>, <span class="number">0.0782</span>]], device=<span class="string">'cuda:0'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>a.tolist()</div><div class="line">[[<span class="number">0.33648067712783813</span>, <span class="number">0.29370278120040894</span>], [<span class="number">0.28659379482269287</span>, <span class="number">0.07816547155380249</span>]]</div></pre></td></tr></table></figure></p>
+<h3 id="附录1-一点神经网络训练tricks"><a href="#附录1-一点神经网络训练tricks" class="headerlink" title="附录1 一点神经网络训练tricks"></a>附录1 一点神经网络训练tricks</h3><ul>
+<li>一种方法是constant warmup，18年Facebook又针对constant warmup进行了改进，因为从一个很小的学习率一下变为比较大的学习率可能会导致训练误差突然增大。提出了gradual warmup来解决这个问题，即从最开始的小学习率开始，每个iteration增大一点，直到最初设置的比较大的学习率。</li>
+<li>在凸优化问题中，随着批量的增加，收敛速度会降低，神经网络也有类似的实证结果。随着batch size的增大，处理相同数据量的速度会越来越快，但是达到相同精度所需要的epoch数量越来越多。也就是说，使用相同的epoch时，大batch size训练的模型与小batch size训练的模型相比，验证准确率会减小。具体做法很简单，比如ResNet原论文中，batch size为256时选择的学习率是0.1，当我们把batch size变为一个较大的数b时，学习率应该变为 0.1 * b/256。</li>
+<li>标签平滑(Label-smoothing regularization,LSR)是一种通过在标签y中加入噪声，实现对模型约束，降低模型过拟合程度的一种正则化方法。它的具体思想是降低我们对于标签的信任，例如我们可以将损失的目标值从1稍微降到0.9，或者将从0稍微升到0.1。标签平滑最早在inception-v2中被提出，它将真实的概率改造为<script type="math/tex; mode=display">
+q_{i}=\left\{\begin{array}{ll}
+{1-\varepsilon} & {\text { if } i=y} \\
+{\varepsilon /(K-1)} & {\text { otherwise }}
+\end{array}\right.</script></li>
+</ul>
+<p><a href="https://blog.csdn.net/u014386899/article/details/103343694" target="_blank" rel="external">参考:深度神经网络模型训练中的最新tricks总结</a></p>
+<h3 id="附录2-tensor和module的hook"><a href="#附录2-tensor和module的hook" class="headerlink" title="附录2 tensor和module的hook"></a>附录2 tensor和module的hook</h3><p>这个有时间针对$Grad-CAM$做一次解读。<br><a href="https://blog.csdn.net/u011995719/article/details/97752853" target="_blank" rel="external">参考:PyTorch的hook及其在Grad-CAM中的应用</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pytorch/" rel="tag"># pytorch</a>
+          
+            <a href="/tags/反向传播autograd/" rel="tag"># 反向传播autograd</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/25/matlab下的SSAE特征提取与图像分类/" rel="next" title="matlab下的SSAE特征提取与图像分类">
+                <i class="fa fa-chevron-left"></i> matlab下的SSAE特征提取与图像分类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/26/BeautyGlow论文的一点笔记/" rel="prev" title="BeautyGlow论文的一点笔记">
+                BeautyGlow论文的一点笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#autograd机制"><span class="nav-number">1.</span> <span class="nav-text">autograd机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关于计算图"><span class="nav-number">1.1.</span> <span class="nav-text">关于计算图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#临时关闭求导with-torch-no-grad"><span class="nav-number">2.</span> <span class="nav-text">临时关闭求导with torch.no_grad()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#in-place-原地操作"><span class="nav-number">3.</span> <span class="nav-text">in-place 原地操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#detach-与-data"><span class="nav-number">4.</span> <span class="nav-text">detach() 与 data()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#item-与tolist"><span class="nav-number">5.</span> <span class="nav-text">item()与tolist()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录1-一点神经网络训练tricks"><span class="nav-number">6.</span> <span class="nav-text">附录1 一点神经网络训练tricks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录2-tensor和module的hook"><span class="nav-number">7.</span> <span class="nav-text">附录2 tensor和module的hook</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

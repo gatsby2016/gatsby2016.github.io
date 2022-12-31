@@ -1,0 +1,953 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Below is my NOTES for the first code file Network.py in 《Neural Networks and Deep Learning》wrote by Michael Nielsen Maybe you can find all codes in this book here
+Also, there are still some mistakes i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络与深度学习代码解读">
+<meta property="og:url" content="http://blog.cyyan.cn/2018/08/19/神经网络与深度学习代码解读/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="Below is my NOTES for the first code file Network.py in 《Neural Networks and Deep Learning》wrote by Michael Nielsen Maybe you can find all codes in this book here
+Also, there are still some mistakes i">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络与深度学习代码解读">
+<meta name="twitter:description" content="Below is my NOTES for the first code file Network.py in 《Neural Networks and Deep Learning》wrote by Michael Nielsen Maybe you can find all codes in this book here
+Also, there are still some mistakes i">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2018/08/19/神经网络与深度学习代码解读/"/>
+
+
+
+
+
+  <title> 神经网络与深度学习代码解读 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2018/08/19/神经网络与深度学习代码解读/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                神经网络与深度学习代码解读
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-19T11:12:57+00:00">
+                2018-08-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>Below is my NOTES for the first code file Network.py in <a href="http://neuralnetworksanddeeplearning.com/" target="_blank" rel="external">《Neural Networks and Deep Learning》</a>wrote by<a href="http://michaelnielsen.org/" target="_blank" rel="external"> Michael Nielsen</a> </strong><br><strong>Maybe you can find all codes in this book <a href="https://github.com/mnielsen/neural-networks-and-deep-learning.git" target="_blank" rel="external">here</a></strong></p>
+<p><strong>Also, there are still some mistakes in this note, you can <a href="Mailto:gatsby2015@163.com" target="_blank" rel="external">mail to me </a>if you have any problems. </strong><br><strong>Besides, I will try to note more for other codes in the  document.</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="string">"""First import the standard library "random" and third-library "numpy" </span></div><div class="line">if we have the library which is made by ourself, we can import them then.</div><div class="line">the order is: &gt;&gt;standard library  &gt;&gt;third-party library &gt;&gt;library by ourself"""</div><div class="line"><span class="comment">################以下为class Network定义#####################</span></div><div class="line"><span class="comment"># 应注意块代码的缩进问题 </span></div><div class="line"><span class="comment"># 而且关于类名的命名 首字母最好大写 括号内为继承的父类 若不写则默认继承自object object属于父类最顶端</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Network</span><span class="params">(object)</span>:</span></div><div class="line"></div><div class="line">	<span class="string">"""__init__用于对bias和weight进行正态分布的初始化"""</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,sizes)</span>:</span>				</div><div class="line">	<span class="comment">#__xxx__表示这是一个特殊方法 方法中定义第一个为self用于对类进行实例化时自动传递实例 </span></div><div class="line">		self.num_layers = len(sizes)		</div><div class="line">		<span class="comment"># len() 用于计算sizes的维度 传递给 实例属性self.num_layers</span></div><div class="line">		self.sizes = sizes							</div><div class="line">		self.biases = [np.random.randn(y,<span class="number">1</span>) <span class="keyword">for</span> y <span class="keyword">in</span> sizes[<span class="number">1</span>:]]</div><div class="line">		<span class="comment"># 以上np.random.randn(y,1)为进行随机初始化y*1的正态分布的array存入biases </span></div><div class="line">		<span class="comment"># for y in sizes[1:] 为列表推导式</span></div><div class="line">		<span class="comment"># sizes[1:]为切片操作 </span></div><div class="line">		<span class="comment"># 如：sizes[1:5:2]  表示截取索引为1（包含）至索引为5（不包含）步长为2的序列</span></div><div class="line">		<span class="comment"># 如果第一个不写默认为0 第二个不写默认为-1 第三个不写默认步长为1 此时后一个：也可以省略</span></div><div class="line">		<span class="comment"># 因为for y in sizes[1:] 会被执行不止一次 所以产生的bias为多维 </span></div><div class="line">		<span class="comment"># 因此整个np.random.randn外面要加[]</span></div><div class="line">		self.weights = [np.random.randn(y,x) <span class="keyword">for</span> x,y <span class="keyword">in</span> zip(sizes[:<span class="number">-1</span>],sizes[<span class="number">1</span>:])]</div><div class="line">		<span class="comment"># 以上zip()函数用于接受多个序列参数 返回tuple list  </span></div><div class="line">		<span class="comment"># 如：	&gt;&gt;&gt; x = [1,2,3]  	&gt;&gt;&gt; y = [4,5,6]		&gt;&gt;&gt; z = [7,8,9]		</span></div><div class="line">		<span class="comment"># &gt;&gt;&gt;xyz = zip(x,y,z)</span></div><div class="line">		<span class="comment"># &gt;&gt;&gt; print xyz  		&gt;&gt;&gt; [(1,4,7),(2,5,8),(3,6,9)]</span></div><div class="line">	</div><div class="line">	<span class="string">"""feedforward前向传播 输入激活值  输出最后一层激活值"""</span>	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">feedforward</span><span class="params">(self,a)</span>:</span>		</div><div class="line">	<span class="comment"># define feedforward method and the parameter is 'a'   注意冒号</span></div><div class="line">		<span class="keyword">for</span> b,w <span class="keyword">in</span> zip(self.biases,self.weights):</div><div class="line">			a = sigmoid(np.dot(w,a) + b)</div><div class="line">		<span class="keyword">return</span> a </div><div class="line">	<span class="comment"># 经过zip函数后 此时b w为每一层的biases 和 weights </span></div><div class="line">	<span class="comment"># 假设输入为784个神经元 第一个隐藏层为30个神经元   </span></div><div class="line">	<span class="comment"># 则biases为30*1的array  weights为30*784的array 第一次a为784*1的array</span></div><div class="line">	<span class="comment"># 因此np.dot(w,a)是array的矩阵乘法 经过for循环后 return 最后一层的激活值</span></div><div class="line">	<span class="comment"># sigmoid函数为下方定义的函数 用来计算S型函数的值 详细函数定义在下</span></div><div class="line"></div><div class="line">	<span class="string">"""SGD 输入为training_data epochs mini_batch_size eta (test_data)  </span></div><div class="line">	整个method用于执行epochs次迭代期 每次迭代期打印数据</div><div class="line">	同时每一迭代期内 随机选取小批量样本数据 每一mini_batchs 计算梯度并更新bias and weights"""</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">SGD</span><span class="params">(self,training_data,epochs,mini_batch_size,eta,test_data=None)</span>:</span>  </div><div class="line">	<span class="comment"># define SGD method and default parameter 'test_data' is None， </span></div><div class="line">	<span class="comment"># 迭代期epochs  小批量数据mini_batch_size 学习速率eta </span></div><div class="line">		<span class="keyword">if</span> test_data: n_test = len(test_data)</div><div class="line">		n = len(training_data)</div><div class="line">		<span class="comment"># 计算training_data的长度 同时如果test_data is not none 计算test_data 的长度</span></div><div class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> xrange(epochs):						</div><div class="line">		<span class="comment"># 循环epochs迭代期的次数 以下为一个epoch做的工作</span></div><div class="line">			random.shuffle(training_data)				</div><div class="line">			<span class="comment"># random.shuffle(x) 随机将list中数据进行乱序打乱  </span></div><div class="line">			mini_batches = [training_data[k:k+mini_batch_size] <span class="keyword">for</span> k <span class="keyword">in</span> xrange(<span class="number">0</span>,n,mini_batch_size)] </div><div class="line">			<span class="comment"># 对于已经打乱的training_data </span></div><div class="line">			<span class="comment"># 从第0个数据开始 </span></div><div class="line">			<span class="comment"># 每隔mini_batch_size切出一块training_data 全部放入mini_batches list中</span></div><div class="line">			<span class="comment"># 此时 mini_batches 可看作(n/mini_batch_size) 份 mini_batch_size training_data的array </span></div><div class="line">			<span class="comment"># （实际上 training_data仍旧有维度）</span></div><div class="line">				<span class="keyword">for</span> mini_batch <span class="keyword">in</span> mini_batches:	</div><div class="line">					self.update_mini_batch(mini_batch,eta)</div><div class="line">					<span class="comment"># 对于mini_batches中每份mini_batch_size training_data</span></div><div class="line">					<span class="comment"># 执行update_mini_batch() 更新实例属性self.biases和weights </span></div><div class="line">					<span class="comment"># 下文method中</span></div><div class="line">			<span class="keyword">if</span> test_data:</div><div class="line">				<span class="keyword">print</span> <span class="string">"epoch &#123;0&#125;:&#123;1&#125;/&#123;2&#125;"</span>.format(j,self.evaluate(test_data),n_test)</div><div class="line">			<span class="keyword">else</span>:</div><div class="line">				<span class="keyword">print</span> <span class="string">"epoch &#123;0&#125; complete"</span>.format(j)</div><div class="line">			<span class="comment"># string.format()函数 格式化字符串 通过&#123;&#125;代替% </span></div><div class="line">			<span class="comment"># 如：&gt;&gt;&gt;'&#123;0&#125;,&#123;1&#125;'.format('name',2017)			则print 为 'name,2017'</span></div><div class="line">			<span class="comment"># 如果有test_data print "epoch %d:%d/%d " %(j,evaluate(test_data),n_test)</span></div><div class="line">			<span class="comment"># 否则 print 形如 "epoch 3 complete"</span></div><div class="line"></div><div class="line">	<span class="comment"># range(1,6,2)为产生从1（包含）到6（不包含）步长为2的list  </span></div><div class="line">	<span class="comment"># 第一个数默认为0 第三个数默认为1 第二个数不可省略</span></div><div class="line">	<span class="comment"># xrange()和range()类似 但是xrange不产生整个list 适用于大范围list 不会在内存创建list 只在循环中使用</span></div><div class="line">	<span class="comment"># 如：xrange(5)  则实际产生[1，2，3，4] 但是不在内存创建</span></div><div class="line"></div><div class="line">	<span class="string">"""update_mini_batch method   </span></div><div class="line">	输入mimi_batch eta  该方法执行一次后即完成一次mini_batch 然后直接更新实例属性"""</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">update_mini_batch</span><span class="params">(self,mini_batch,eta)</span>:</span></div><div class="line">		nabla_b = [np.zeros(b.shape) <span class="keyword">for</span> b <span class="keyword">in</span> self.biases]		</div><div class="line">		<span class="comment"># 初始化一个和biases相同维度的全零array 用于存储梯度和</span></div><div class="line">		nabla_w = [np.zeros(w.shape) <span class="keyword">for</span> w <span class="keyword">in</span> self.weights]		</div><div class="line">		<span class="comment"># 同上</span></div><div class="line">		<span class="keyword">for</span> x,y <span class="keyword">in</span> mini_batch:								</div><div class="line">		<span class="comment"># 该for循环用于累加计算整个mini_batch上的梯度的和 </span></div><div class="line">			delta_nabla_b, delta_nabla_w = self.backprop(x,y) 	</div><div class="line">			<span class="comment"># 计算一个mini_batch的梯度</span></div><div class="line">			nabla_b = [nb + dnb <span class="keyword">for</span> nb, dnb <span class="keyword">in</span> zip(nabla_b,delta_nabla_b)] </div><div class="line">			<span class="comment"># 迭代计算将此次mini_batch上的b的梯度加上nabla_b 再传递给nabla_b  </span></div><div class="line">			<span class="comment"># 在以上这一for循环中 执行一次是执行一层 最后形成形如biases的array 传递给nabla_b</span></div><div class="line">			nabla_w = [nw + dnw <span class="keyword">for</span> nw, dnw <span class="keyword">in</span> zip(nabla_w,delta_nabla_w)]	<span class="comment"># 同上</span></div><div class="line">		self.weights = [w-(eta/len(mini_batch)*nw <span class="keyword">for</span> w,nw <span class="keyword">in</span> zip(self.weights,nabla_w)]</div><div class="line">		<span class="comment"># 更新weights （每个mini_batch更新一次）  </span></div><div class="line">		<span class="comment"># w(this mini_batch) = w(last mini_batch) 减去 （eta*（梯度的和）/mini_batch_size)</span></div><div class="line">		self.biases = [b-(eta/len(mini_batch)*nb <span class="keyword">for</span> b,nb <span class="keyword">in</span> zip(self.biases,nabla_b)]	</div><div class="line">		<span class="comment"># 同上</span></div><div class="line">	<span class="comment"># x.shape 返回array或者matrix x 的维度 以tuple的形式</span></div><div class="line"></div><div class="line">	<span class="string">"""backpropagation  应用feedforward计算每一层的带权输入和激活值 然后计算输出层的误差 </span></div><div class="line">	再应用backpropagation计算every layers every neurons 的误差 求得关于b的梯度 </div><div class="line">	关于w的梯度为误差*前一层对应激活值（转置）"""</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">backprop</span><span class="params">(self,x,y)</span>:</span></div><div class="line">		nabla_b = [np.zeros(b.shape) <span class="keyword">for</span> b <span class="keyword">in</span> self.biases]		</div><div class="line">		<span class="comment"># 初始化一个和biases相同维度的全零array 用于存储b w的梯度</span></div><div class="line">		nabla_w = [np.zeros(w.shape) <span class="keyword">for</span> w <span class="keyword">in</span> self.weights]		</div><div class="line">		<span class="comment"># 同上</span></div><div class="line">		activation = x 				<span class="comment"># 将输入赋给activation 作为激活值</span></div><div class="line">		activations = [x]			<span class="comment"># 作为array的元素传给activations list</span></div><div class="line">		zs = []						<span class="comment"># 初始化一个用来放置带权输入的zs list</span></div><div class="line">		<span class="keyword">for</span> b,w <span class="keyword">in</span> zip(self.biases,self.weights):</div><div class="line">			z = np.dot(w,activation) + b 	 </div><div class="line">			<span class="comment"># 计算带权输入z for表示每一层每一层的计算</span></div><div class="line">			zs.append(z) 			</div><div class="line">			<span class="comment"># 将元素z（代表一层的z）增加到zs list中  zs.append(元素)</span></div><div class="line">			activation = sigmoid(z) </div><div class="line">			<span class="comment"># 计算S型函数 即为该层的激活值</span></div><div class="line">		<span class="comment"># 以上7行代码为前向传播	计算每一层的带权输入z和激活值</span></div><div class="line">		delta = self.cost_derivative(activations[<span class="number">-1</span>],y) * sigmoid_prime(zs[<span class="number">-1</span>]) 	</div><div class="line">		<span class="comment"># BP1  activations[-1]为输出层激活值 （二次代价函数的导数即为a-y） </span></div><div class="line">		<span class="comment"># 所以以上公式为求输出层误差delta</span></div><div class="line">		nabla_b[<span class="number">-1</span>] = delta 		</div><div class="line">		<span class="comment"># BP3 神经元的误差即为其关于b的偏导数  所以将输出层上C关于b的梯度存入nabla_b[-1]</span></div><div class="line">		nabla_w[<span class="number">-1</span>] = np.dot(delta, activations[<span class="number">-2</span>].transpose())</div><div class="line">		<span class="comment"># BP4  当前层C关于w的梯度是当前层的误差*前一层的激活值    </span></div><div class="line">		<span class="comment"># x.transpose()为对array x 转置 </span></div><div class="line">		<span class="comment"># 若神经元为【4，3，2】 则delta为2*1 activations[-2]为3*1  </span></div><div class="line">		<span class="comment"># activations[-2].transpose()为1*3 此时矩阵相乘则得2*3 array 为输出层w梯度</span></div><div class="line">		<span class="keyword">for</span> l <span class="keyword">in</span> xrange(<span class="number">2</span>,self.num_layers):  </div><div class="line">		<span class="comment"># 从倒数第二层到第二层  应用backpropagation</span></div><div class="line">			z = zs[-l]	</div><div class="line">			sp = sigmoid_prime(z) </div><div class="line">			delta = np.dot(self.weights[-l+<span class="number">1</span>].transpose(),delta)*sp	</div><div class="line">			<span class="comment"># BP2 计算(-l)层神经元误差 l层w的转置*l层的误差*l层S型函数的导数</span></div><div class="line">			nabla_b[-l] = delta</div><div class="line">			nabla_w[-l] = np.dot(delta,activations[-l<span class="number">-1</span>].transpose())</div><div class="line">		<span class="keyword">return</span> (nabla_b,nabla_w)		</div><div class="line">		<span class="comment"># 返回整个神经网络每一层每一神经元的b和w的梯度</span></div><div class="line"></div><div class="line">	<span class="string">"""测试函数 输入test_data 输出为the target numbers in all test_data numbers"""</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">evaluate</span><span class="params">(self,test_data)</span>:</span>					</div><div class="line">	<span class="comment"># 计算test_data number中达到target的总数</span></div><div class="line">		test_results = [(np.argmax(self.feedforward(x)),y) <span class="keyword">for</span> (x,y) <span class="keyword">in</span> test_data]	</div><div class="line">		<span class="comment"># np.argmax()用于选取list中最大值，同时将该最大值和对应test_data的y作为一个tuple，然后放入list test_results</span></div><div class="line">		<span class="keyword">return</span> sum(int(x == y) <span class="keyword">for</span> (x,y) <span class="keyword">in</span> test_results)</div><div class="line">		<span class="comment"># 比对list中每个tuple的x与y 如果相等为1 否则为0 然后对整个求和  返回值即为target numbers in all numbers </span></div><div class="line"></div><div class="line">	<span class="string">"""function cost 的导数derivative  返回值为输入参数out_activations 和y的差  纯粹为了直观"""</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">cost_derivative</span><span class="params">(self,output_activations,y)</span>:</span></div><div class="line">		<span class="keyword">return</span> (output_activations - y)</div><div class="line"></div><div class="line"><span class="comment">################以下为函数定义#####################</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span>									<span class="comment"># The sigmoid function.</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1.0</span>/(<span class="number">1.0</span>+np.exp(-z)) 				<span class="comment">#np.exp(x) numpy内置函数  返回e的x次方  实际输入为array</span></div><div class="line"><span class="string">"""	如果是手动输入一个3*1的list需要先显式将list转化为array  再进行np.exp(-x)运算 否则exp()无法进行list中元素取负号的运算 运行np.exp(x)则不会  </span></div><div class="line">	如果随机化一个array 则不会出现任何问题且能计算该array中所有元素的exp()的值"""</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_prime</span><span class="params">(z)</span>:</span>							<span class="comment"># Derivative of the sigmoid function</span></div><div class="line">    <span class="keyword">return</span> sigmoid(z)*(<span class="number">1</span>-sigmoid(z)) 			<span class="comment"># S型函数的导数</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/14/matlab下操作SVM种种/" rel="next" title="matlab下操作SVM种种">
+                <i class="fa fa-chevron-left"></i> matlab下操作SVM种种
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/03/libsvm与perfcurve/" rel="prev" title="libsvm与perfcurve">
+                libsvm与perfcurve <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

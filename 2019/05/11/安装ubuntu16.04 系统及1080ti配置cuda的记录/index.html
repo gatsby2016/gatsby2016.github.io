@@ -1,0 +1,1075 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ubuntu,cuda," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="制作系统盘准备材料： U盘8G，UltralSO 9.7软件（软碟通），ubuntu16.04系统ISO文件系统盘制作具体细节不赘述，按照下图三部走，即可。
+系统安装
+系统盘插上，开机！点按F11， 直到出现选择引导（SATA硬盘或者USB或者UEFI），选择USB引导；
+进入ubuntu系统安装界面；语言：下拉到最后选择中文（简体），然后点击安装ubuntu
+进入界面准备安装ubuntu，都不需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装ubuntu16.04 系统及1080ti配置cuda的记录">
+<meta property="og:url" content="http://blog.cyyan.cn/2019/05/11/安装ubuntu16.04 系统及1080ti配置cuda的记录/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="制作系统盘准备材料： U盘8G，UltralSO 9.7软件（软碟通），ubuntu16.04系统ISO文件系统盘制作具体细节不赘述，按照下图三部走，即可。
+系统安装
+系统盘插上，开机！点按F11， 直到出现选择引导（SATA硬盘或者USB或者UEFI），选择USB引导；
+进入ubuntu系统安装界面；语言：下拉到最后选择中文（简体），然后点击安装ubuntu
+进入界面准备安装ubuntu，都不需">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/1.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/2.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/3.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/quickstart.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/grub.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/device.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/ubuntu_install/nvcc.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装ubuntu16.04 系统及1080ti配置cuda的记录">
+<meta name="twitter:description" content="制作系统盘准备材料： U盘8G，UltralSO 9.7软件（软碟通），ubuntu16.04系统ISO文件系统盘制作具体细节不赘述，按照下图三部走，即可。
+系统安装
+系统盘插上，开机！点按F11， 直到出现选择引导（SATA硬盘或者USB或者UEFI），选择USB引导；
+进入ubuntu系统安装界面；语言：下拉到最后选择中文（简体），然后点击安装ubuntu
+进入界面准备安装ubuntu，都不需">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/ubuntu_install/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2019/05/11/安装ubuntu16.04 系统及1080ti配置cuda的记录/"/>
+
+
+
+
+
+  <title> 安装ubuntu16.04 系统及1080ti配置cuda的记录 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2019/05/11/安装ubuntu16.04 系统及1080ti配置cuda的记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                安装ubuntu16.04 系统及1080ti配置cuda的记录
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-11T04:38:23+00:00">
+                2019-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Ubuntu/" itemprop="url" rel="index">
+                    <span itemprop="name">Ubuntu</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="制作系统盘"><a href="#制作系统盘" class="headerlink" title="制作系统盘"></a>制作系统盘</h3><p><strong>准备材料： U盘8G，UltralSO 9.7软件（软碟通），<a href="http://releases.ubuntu.com/xenial/" target="_blank" rel="external">ubuntu16.04系统ISO文件</a></strong><br>系统盘制作具体细节不赘述，按照下图三部走，即可。<br><img src="/download/ubuntu_install/1.png" alt="选择系统ISO文件"><br><img src="/download/ubuntu_install/2.png" alt="启动写入硬盘映像"><br><img src="/download/ubuntu_install/3.png" alt="写入配置"></p>
+<h3 id="系统安装"><a href="#系统安装" class="headerlink" title="系统安装"></a>系统安装</h3><ol>
+<li>系统盘插上，开机！点按<code>F11</code>， 直到出现选择引导（<code>SATA硬盘或者USB或者UEFI</code>），选择<code>USB</code>引导；</li>
+<li>进入ubuntu系统安装界面；语言：下拉到最后选择<code>中文（简体）</code>，然后点击<code>安装ubuntu</code></li>
+<li>进入界面<code>准备安装ubuntu</code>，都不需要选择，点击<code>继续</code>; （更新后续可以在系统里进行）</li>
+<li>点击最后的<code>其他选项</code>， 然后<code>现在安装</code>；</li>
+<li>进行系统安装位置选择，进行分区； 具体分区根据自己硬盘空间而定，以下表格分区方式以我2T硬盘为例；分区完成后，<code>安装启动引导器的设备</code>选择你装ubuntu系统的硬盘即可； 如<code>/dev/sda</code>; 然后<code>现在安装</code>！</li>
+<li>后面就是一些小的操作了，<code>选择地区</code> <code>填入计算机名和用户名密码等</code>。正常操作就可以，不再赘述。 直到最后安装完成，重启！ </li>
+<li>至此，ubuntu16.04系统安装成功！</li>
+<li>进入ubuntu新系统后，建议开启一波更新操作。而在这之前，最好更换系统源：<code>系统设置</code> &gt; <code>软件和更新</code>&gt; <code>下载自</code> &gt; <code>其他站点</code> &gt; <code>ftp.sjtu.edu.cn</code> 然后密码授权、<code>关闭</code>及<code>重新载入</code>。此时，<code>$ sudo apt update</code> + <code>$ sudo apt upgrade</code>等待完成更新。</li>
+</ol>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">挂载点</th>
+<th style="text-align:center">分区大小</th>
+<th>格式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/boot</td>
+<td style="text-align:center">1G</td>
+<td>逻辑分区 空间起始位置 ext4</td>
+<td>Linux的内核及引导系统程序所需要的文件，比如 vmlinuz initrd.img文件。在一般情况下，GRUB或LILO系统引导管理器也位于这个目录；如kernels，initrd，grub</td>
+</tr>
+<tr>
+<td style="text-align:center">swap</td>
+<td style="text-align:center">8G</td>
+<td>逻辑分区 空间起始位置 交换空间</td>
+<td>相当于Windows中的“虚拟内存”，一般等于物理内存大小</td>
+</tr>
+<tr>
+<td style="text-align:center">/</td>
+<td style="text-align:center">300G</td>
+<td>主分区 空间起始位置 ext4</td>
+<td>相当于Windows中的C盘，根目录，系统盘</td>
+</tr>
+<tr>
+<td style="text-align:center">/home</td>
+<td style="text-align:center">1.7TB</td>
+<td>逻辑分区 空间起始位置 ext4</td>
+<td>除了以上的所有剩余空间都给这个了。为工作目录；后续分配用户账号都在home工作目录下，如/home/cyyan/</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><a href="https://blog.csdn.net/u012052268/article/details/77145427/" target="_blank" rel="external"> <strong>参考1.安装Ubuntu Linux系统时硬盘分区最合理的方法</strong></a></p>
+<h3 id="显卡驱动及配置cuda10-0"><a href="#显卡驱动及配置cuda10-0" class="headerlink" title="显卡驱动及配置cuda10.0"></a>显卡驱动及配置cuda10.0</h3><p><a href="https://developer.nvidia.com/cuda-10.0-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;target_distro=Ubuntu&amp;target_version=1604&amp;target_type=runfilelocal" target="_blank" rel="external"><strong>nvidia官网文件 cuda_10.0.130_410.48_linux.run</strong></a><br><a href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions" target="_blank" rel="external"><strong>参考2. cuda toolkit 安装指导手册大全</strong></a><br><a href="https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#ubuntu-x86_64-run" target="_blank" rel="external"><strong>参考3. cuda快速安装一本通</strong></a><br><img src="/download/ubuntu_install/quickstart.png" alt="快速一本通具体部分截图"></p>
+<ol>
+<li>下载cuda_10.0.130_410.48_linux.run文件至/home/cyyan，然后打开参考3链接，仔细阅读一遍，做好操作心理准备；</li>
+<li><p>创建conf文件<code>$ sudo vim /etc/modprobe.d/blacklist-nouveau.conf</code>添加以下内容禁用Nouveau驱动，保存退出后<code>$ sudo update-initramfs -u</code> 重新生成kernel内核和initramfs。</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">blacklist nouveau</div><div class="line">options nouveau modeset=0</div></pre></td></tr></table></figure>
+</li>
+<li><p>重启进入系统， 在grub选择页面按<code>e</code>键进入编辑启动项，在行首是<code>linux</code>字样的所在行，添加 <code>3 nomodeset</code>至行尾，然后<code>ctrl + x</code>进入系统；<br><img src="/download/ubuntu_install/grub.png" alt="编辑启动项示意图"></p>
+</li>
+<li>进入黑乎乎的<code>tty1</code>页面后，输入用户名<code>&gt; cyyan</code>和对应密码进入用户目录，然后直接执行<code>$ sudo sh cuda_10.0.130_410.48_linux.run</code>开始安装显卡驱动及cuda10.0<ol>
+<li>阅读<code>user license agreement</code>并<code>accept</code>同意， （不想阅读按<code>q</code>键结束）</li>
+<li><code>Install NVIDIA Accelerated Graphics Driver for Linux-x86_64 410.48 ?</code>，<code>yes</code>啦；</li>
+<li><code>Do you want to install the OpenGL libraries?</code> 如果是NVIDiA显卡，<code>yes</code>啦；</li>
+<li><code>Do you want to run nvidia-xconfig?</code> 这个不是很清楚哎，那就默认吧<code>no</code>；</li>
+<li><code>Install the CUDA 10.0 Toolkit?</code>就是要装这个东西的，<code>yes</code>;</li>
+<li><code>Enter ToolKit Location</code>，默认<code>/usr/local/cuda-10.0</code>就可以啦;</li>
+<li><code>Do you want to install a symbolic link at /usr/local/cuda?</code> 软连接到<code>/usr/local/cuda</code>； <code>yes</code>;</li>
+<li><code>Install the CUDA 10.0 Samples?</code> 这个安装一下啦，后面用来验证cuda是否安装好；<code>yes</code>; </li>
+<li><code>Enter CUDA Samples Location</code>，默认位置啦；</li>
+<li>然后就等待安装啦！</li>
+</ol>
+</li>
+<li>一切安装配置完成后，<code>$ sudo nvidia-xconfig</code>创建xorg.conf 文件用于显卡显示；然后<code>$ reboot</code>重启系统；</li>
+<li>进入系统后，打开终端进入目录<code>$ cd /usr/local/cuda-10.0/samples/1_Utilities/deviceQuery/</code>编译samples<code>$ sudo make</code>及<code>$ ./deviceQuery</code>，验证cuda；当最后一行<code>Result = PASS</code>时，表明cuda安装好。<br><img src="/download/ubuntu_install/device.png" alt="DEVICE结果"></li>
+<li><p>打开bashrc文件<code>$ vim ~/.bashrc</code>将以下两行环境变量添加至文档最后，保存退出后执行bashrc文件<code>$ source ~/.bashrc</code>。大功告成！</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda-10.0/lib64</div><div class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/<span class="built_in">local</span>/cuda-10.0/bin</div></pre></td></tr></table></figure>
+</li>
+<li><p>可以尝试检查驱动版本<code>$ cat /proc/driver/nvidia/version</code>和cuda 版本<code>$ nvcc -V</code>。 <code>$ nvidia-smi 查看显卡信息</code>，如下图所示：<br><img src="/download/ubuntu_install/nvcc.png" alt="检查版本及查看信息"></p>
+</li>
+</ol>
+<h3 id="基本工具-terminal快捷键-annconda-pytorch-synergy"><a href="#基本工具-terminal快捷键-annconda-pytorch-synergy" class="headerlink" title="基本工具: terminal快捷键 + annconda + pytorch + synergy"></a>基本工具: terminal快捷键 + annconda + pytorch + synergy</h3><h5 id="terminal快捷键"><a href="#terminal快捷键" class="headerlink" title="terminal快捷键"></a>terminal快捷键</h5><p>打开<code>系统设置</code> &gt; <code>键盘</code> &gt; <code>快捷键</code> &gt; <code>自定义快捷键</code> &gt; <code>+</code><br>名称：<code>fastterminal</code> 命令：<code>gnome-terminal --geometry=128x48+300+100 --working-directory=N</code><br><code>应用</code>后新建加速键 <code>Ctrl+N</code> ok！<br>效果就是<code>Ctrl+N</code>后 出来terminal；128x48表示大小，横向128，纵向48，+300+100表示位置，以屏幕的左下角为原点；所在目录为<code>home/cyyan</code></p>
+<h4 id="anaconda及pytorch安装"><a href="#anaconda及pytorch安装" class="headerlink" title="anaconda及pytorch安装"></a>anaconda及pytorch安装</h4><p>常规操作，anaconda安装具体可以参考我女朋友的<a href="https://zoesxw.github.io/2018/05/08/anaconda%E6%80%BB%E7%BB%93/" target="_blank" rel="external">爆款博文</a><br>然后在anaconda里create 新env 然后安装pytorch 参考<a href="https://pytorch.org/" target="_blank" rel="external">官网咯</a><br><code>$ conda install pytorch torchvision cudatoolkit=10.0 -c pytorch</code></p>
+<h4 id="synergy-和dukto-和teamviewer安装"><a href="#synergy-和dukto-和teamviewer安装" class="headerlink" title="synergy 和dukto 和teamviewer安装"></a>synergy 和dukto 和teamviewer安装</h4>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntu/" rel="tag"># ubuntu</a>
+          
+            <a href="/tags/cuda/" rel="tag"># cuda</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/16/途经农田有感/" rel="next" title="途经农田有感">
+                <i class="fa fa-chevron-left"></i> 途经农田有感
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/26/pytorch中的几个loss/" rel="prev" title="pytorch中的几个loss">
+                pytorch中的几个loss <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#制作系统盘"><span class="nav-number">1.</span> <span class="nav-text">制作系统盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统安装"><span class="nav-number">2.</span> <span class="nav-text">系统安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显卡驱动及配置cuda10-0"><span class="nav-number">3.</span> <span class="nav-text">显卡驱动及配置cuda10.0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本工具-terminal快捷键-annconda-pytorch-synergy"><span class="nav-number">4.</span> <span class="nav-text">基本工具: terminal快捷键 + annconda + pytorch + synergy</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#terminal快捷键"><span class="nav-number">4.0.1.</span> <span class="nav-text">terminal快捷键</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#anaconda及pytorch安装"><span class="nav-number">4.1.</span> <span class="nav-text">anaconda及pytorch安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#synergy-和dukto-和teamviewer安装"><span class="nav-number">4.2.</span> <span class="nav-text">synergy 和dukto 和teamviewer安装</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

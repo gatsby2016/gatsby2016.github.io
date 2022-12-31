@@ -1,0 +1,1036 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="v2ray," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="难得有时间，又难得对谷歌有需求，苦于ss经常被堵，开始寻求一种更可行的方案，v2ray。以下简单记录一下配置v2ray服务端和客户端的基本内容。
+
+和SS以及SSR一样，v2ray本质上也是一个代理软件。但是相比而言，其具有更强大的功能，不仅网速快，而且协议完善，安全度高，而且可以开启网站伪装，隐蔽性更好。尽管配置复杂了一些，好在有大神的一键脚本安装方便很多。献上大牛的博客https://www">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VPS的ubuntu上搭建v2ray服务端及客户端配置教程">
+<meta property="og:url" content="http://blog.cyyan.cn/2019/11/21/VPS的ubuntu上搭建v2ray服务端及客户端配置教程/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="难得有时间，又难得对谷歌有需求，苦于ss经常被堵，开始寻求一种更可行的方案，v2ray。以下简单记录一下配置v2ray服务端和客户端的基本内容。
+
+和SS以及SSR一样，v2ray本质上也是一个代理软件。但是相比而言，其具有更强大的功能，不仅网速快，而且协议完善，安全度高，而且可以开启网站伪装，隐蔽性更好。尽管配置复杂了一些，好在有大神的一键脚本安装方便很多。献上大牛的博客https://www">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/1.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/2.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/3.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/4.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/5.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/6.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/s.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/7.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/8.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/9.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/10.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/11.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/12.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/v2ray/13.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VPS的ubuntu上搭建v2ray服务端及客户端配置教程">
+<meta name="twitter:description" content="难得有时间，又难得对谷歌有需求，苦于ss经常被堵，开始寻求一种更可行的方案，v2ray。以下简单记录一下配置v2ray服务端和客户端的基本内容。
+
+和SS以及SSR一样，v2ray本质上也是一个代理软件。但是相比而言，其具有更强大的功能，不仅网速快，而且协议完善，安全度高，而且可以开启网站伪装，隐蔽性更好。尽管配置复杂了一些，好在有大神的一键脚本安装方便很多。献上大牛的博客https://www">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/v2ray/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2019/11/21/VPS的ubuntu上搭建v2ray服务端及客户端配置教程/"/>
+
+
+
+
+
+  <title> VPS的ubuntu上搭建v2ray服务端及客户端配置教程 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2019/11/21/VPS的ubuntu上搭建v2ray服务端及客户端配置教程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                VPS的ubuntu上搭建v2ray服务端及客户端配置教程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-21T15:17:03+00:00">
+                2019-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SS/" itemprop="url" rel="index">
+                    <span itemprop="name">SS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>难得有时间，又难得对谷歌有需求，苦于ss经常被堵，开始寻求一种更可行的方案，v2ray。以下简单记录一下配置v2ray服务端和客户端的基本内容。</p>
+</blockquote>
+<p>和SS以及SSR一样，v2ray本质上也是一个代理软件。但是相比而言，其具有更强大的功能，不仅网速快，而且协议完善，安全度高，而且可以开启网站伪装，隐蔽性更好。尽管配置复杂了一些，好在有大神的一键脚本安装方便很多。<br>献上大牛的博客<br><a href="https://www.v2ray.com/" target="_blank" rel="external">https://www.v2ray.com/</a><br><a href="https://233v2.com/" target="_blank" rel="external">https://233v2.com/</a></p>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>vps服务器一台 (我这里是从<a href="https://www.vultr.com/?ref=8325773-4F" target="_blank" rel="external">vultr官网</a>购买)</li>
+<li>MobaXterm软件用于ssh远程登录 <a href="https://mobaxterm.mobatek.net/" target="_blank" rel="external">下载地址</a><br><img src="/download/v2ray/1.png" alt="showmethecode"></li>
+</ul>
+<h3 id="服务端配置，v2ray脚本一键安装"><a href="#服务端配置，v2ray脚本一键安装" class="headerlink" title="服务端配置，v2ray脚本一键安装"></a>服务端配置，v2ray脚本一键安装</h3><ol>
+<li>在终端执行下面脚本：<br><code>bash &lt;(curl -s -L https://git.io/v2ray.sh)</code><br>回车<br><img src="/download/v2ray/2.png" alt="step2"></li>
+<li>选择<code>安装</code> <code>1</code><br><img src="/download/v2ray/3.png" alt="step3"></li>
+<li>选择<code>WebSocket + TLS</code> 数字<code>4</code> 更好掩护自己，不至于被pingbi<br><img src="/download/v2ray/4.png" alt="step4"></li>
+<li>输入代理端口，按个人喜好<br><img src="/download/v2ray/5.png" alt="step5"></li>
+<li>输入自己的域名， 然后到对应域名所在的控制台进行解析，这一步主要用于掩护<br><img src="/download/v2ray/6.png" alt="step6"></li>
+<li>解析完成后，<code>Y</code>并回车 并进行自动配置TLS <code>Y</code><br><img src="/download/v2ray/s.png" alt="step7"></li>
+<li>是否开启网站伪装和路径分流 <code>Y</code>， 然后依次填入分流路径和伪装的网址， 比如<code>www.baidu.com</code>或者自己的博客网址<code>cyyan.cn</code><br><img src="/download/v2ray/7.png" alt="step8"></li>
+<li>是否开启广告拦截 <code>N</code><br><img src="/download/v2ray/8.png" alt="step9"><br><img src="/download/v2ray/9.png" alt="step10"></li>
+<li>是否配置shadowsocks <code>Y</code>，然后依次输入端口，密码，以及加密协议。</li>
+<li>回车，安装。<br><img src="/download/v2ray/10.png" alt="step11"></li>
+<li>安装完成后自动打印出vmess协议配置信息以及shadowsocks配置信息。<br><img src="/download/v2ray/11.png" alt="step12"></li>
+<li>可以<code>v2ray url</code> 查看url信息用于v2ray客户端配置。</li>
+</ol>
+<h3 id="Windows客户端配置"><a href="#Windows客户端配置" class="headerlink" title="Windows客户端配置"></a>Windows客户端配置</h3><ol>
+<li>到github上下载v2rayN-Core <a href="https://github.com/2dust/v2rayN/releases/download/2.50/v2rayN-Core.zip" target="_blank" rel="external">Github链接</a></li>
+<li><p>解压后，双击打开<code>v2rayN.exe</code>文件，该文件即为v2ray客户端，然后双击任务栏的对应小图标；</p>
+</li>
+<li><p>复制服务端的vmess的url配置信息，然后点击<code>从剪切板导入批量URL</code><br><img src="/download/v2ray/12.png" alt="step13"></p>
+</li>
+<li><p><code>Http代理</code>选项选择<code>开启PAC并自动配置PAC</code><br><img src="/download/v2ray/13.png" alt="step14"></p>
+</li>
+</ol>
+<h3 id="IOS客户端配置"><a href="#IOS客户端配置" class="headerlink" title="IOS客户端配置"></a>IOS客户端配置</h3><p>IOS端需要首先下载小火箭客户端，但是app store上不能在国服下载，美服下载也收费。3刀。<br>但是网上也有很多热心肠贡献出自己的账号，可以供大家免费下载。当然，也不一定什么时候就没了。<br><a href="https://github.com/v2ss/shadowrocket" target="_blank" rel="external">IOS shadowrocket</a><br><a href="https://lueyingpro.github.io/shadowrocket/index.html" target="_blank" rel="external">Shadowrocket小火箭在线安装地址</a></p>
+<p>安装好软件后，可以通过手动输入配置信息的方式，基本上和服务端的对应即可。可以参考<a href="https://233v2.com/post/11/" target="_blank" rel="external"><strong>这篇</strong></a></p>
+<h3 id="安卓客户端配置"><a href="#安卓客户端配置" class="headerlink" title="安卓客户端配置"></a>安卓客户端配置</h3><p>V2Ray安卓(Android)客户端有V2RayNG和BifrostV 可供下载。<br><a href="https://play.google.com/store/apps/details?id=com.v2ray.ang" target="_blank" rel="external">Google Play上V2RayNG下载安装</a><br><a href="https://github.com/2dust/v2rayNG/releases" target="_blank" rel="external">Github上的V2RayNG下载安装</a><br>具体的配置，都比较简单啦，摸索摸索就可以。可以参考<a href="https://233v2.com/post/12/" target="_blank" rel="external"><strong>这篇</strong></a></p>
+<h3 id="几点问题FAQ"><a href="#几点问题FAQ" class="headerlink" title="几点问题FAQ"></a>几点问题FAQ</h3><ul>
+<li><p>我之前用的都好好的，但是ip被封了，我重新搞了个vps再重新来一遍之后，设置都保持一样，最终出现只有UUID改变了，如果我想用之前的UUID，我该怎么修改？<br><strong>UUID的确是默认的，但是可以通过修改配置文件的方式修改UUID，将</strong><code>/etc/v2ray/config.json</code><strong>该配置文件中的UUID修改为原来的即可。</strong></p>
+</li>
+<li><p>我都是按照步骤来的，但是配置好之后（客户端也确认配置没问题），为什么还是翻不出去呢？<br><strong>一个可能的问题是，你不是在ubuntu系统里操作的。对于centos系统，有些端口不会开放，因此正常步骤完成后无法连接。但是ubuntu系统没有这个问题，因此建议重新install系统为ubuntu后，再次来过即可使用。比在centos系统里修改端口开放省事得多。</strong></p>
+</li>
+</ul>
+<h3 id="写在配置之后"><a href="#写在配置之后" class="headerlink" title="写在配置之后"></a>写在配置之后</h3><p>几台vps，每月10刀，但是每月流量相当多，因此决定出售流量，回笼资金。<strong>定价10元/100G/月</strong></p>
+<p>收费主要考虑几个原因：<br>1.自己穷学生，毕竟也花了金钱花了功夫折腾，收点钱多少可以<strong>回笼点资金</strong>，后续才会<strong>源远流长</strong>，不至于断流；<br>2.免费的东西反而会让购买方觉得廉价，对待更随意；花钱买到的尤其虚拟产品，更多是<strong>售后保障和售后服务</strong>；<br>3.自己能赚到一点钱，也会觉得自己这些折腾受到<strong>鼓励和支持</strong>，也许你们的十元就是一种投资!</p>
+<p>欢迎咨询购买 <code>QQ: 771022845</code>  <code>Mail: gatsby2015@163.com</code></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/v2ray/" rel="tag"># v2ray</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/26/计算机视觉中的Non-local-Block以及其他注意力机制/" rel="next" title="计算机视觉中的Non-local-Block以及其他注意力机制">
+                <i class="fa fa-chevron-left"></i> 计算机视觉中的Non-local-Block以及其他注意力机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/25/matlab下的SSAE特征提取与图像分类/" rel="prev" title="matlab下的SSAE特征提取与图像分类">
+                matlab下的SSAE特征提取与图像分类 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备材料"><span class="nav-number">1.</span> <span class="nav-text">准备材料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务端配置，v2ray脚本一键安装"><span class="nav-number">2.</span> <span class="nav-text">服务端配置，v2ray脚本一键安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows客户端配置"><span class="nav-number">3.</span> <span class="nav-text">Windows客户端配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IOS客户端配置"><span class="nav-number">4.</span> <span class="nav-text">IOS客户端配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安卓客户端配置"><span class="nav-number">5.</span> <span class="nav-text">安卓客户端配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#几点问题FAQ"><span class="nav-number">6.</span> <span class="nav-text">几点问题FAQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写在配置之后"><span class="nav-number">7.</span> <span class="nav-text">写在配置之后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>

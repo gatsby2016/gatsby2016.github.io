@@ -1,0 +1,999 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="写在前面之前在投稿isbi时做对比实验的SSAE方法。近期有时间总结一下，防止后续需要的时候又找不到。
+Stacked Sparse Autoencoder (SSAE) for Nuclei Detection on Breast Cancer Histopathology images这篇isi热引论文采用堆叠稀疏自编码器(SSAE)对病理WSI做细胞核检测，虽然是检测，但也是通过滑动窗+图像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="matlab下的SSAE特征提取与图像分类">
+<meta property="og:url" content="http://blog.cyyan.cn/2019/11/25/matlab下的SSAE特征提取与图像分类/index.html">
+<meta property="og:site_name" content="World in my heart">
+<meta property="og:description" content="写在前面之前在投稿isbi时做对比实验的SSAE方法。近期有时间总结一下，防止后续需要的时候又找不到。
+Stacked Sparse Autoencoder (SSAE) for Nuclei Detection on Breast Cancer Histopathology images这篇isi热引论文采用堆叠稀疏自编码器(SSAE)对病理WSI做细胞核检测，虽然是检测，但也是通过滑动窗+图像">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/1.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/4.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/2.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/9.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/6.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/7.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/3.png">
+<meta property="og:image" content="http://blog.cyyan.cn/download/SSAE/8.png">
+<meta property="og:updated_time" content="2022-12-31T14:45:43.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="matlab下的SSAE特征提取与图像分类">
+<meta name="twitter:description" content="写在前面之前在投稿isbi时做对比实验的SSAE方法。近期有时间总结一下，防止后续需要的时候又找不到。
+Stacked Sparse Autoencoder (SSAE) for Nuclei Detection on Breast Cancer Histopathology images这篇isi热引论文采用堆叠稀疏自编码器(SSAE)对病理WSI做细胞核检测，虽然是检测，但也是通过滑动窗+图像">
+<meta name="twitter:image" content="http://blog.cyyan.cn/download/SSAE/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"No finding any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.cyyan.cn/2019/11/25/matlab下的SSAE特征提取与图像分类/"/>
+
+
+
+
+
+  <title> matlab下的SSAE特征提取与图像分类 | World in my heart </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">World in my heart</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-crac">
+          <a href="/CRAC" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            CRAC
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-download">
+          <a href="/download" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-download"></i> <br />
+            
+            Downloads
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/About" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.cyyan.cn/2019/11/25/matlab下的SSAE特征提取与图像分类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chaoyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="World in my heart">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                matlab下的SSAE特征提取与图像分类
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-25T15:00:28+00:00">
+                2019-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>之前在投稿isbi时做对比实验的SSAE方法。近期有时间总结一下，防止后续需要的时候又找不到。</p>
+<p><a href="https://ieeexplore.ieee.org/document/7163353?arnumber=7163353" target="_blank" rel="external">Stacked Sparse Autoencoder (SSAE) for Nuclei Detection on Breast Cancer Histopathology images</a><br>这篇isi热引论文采用堆叠稀疏自编码器(SSAE)对病理WSI做细胞核检测，虽然是检测，但也是通过滑动窗+图像块+细胞核/非细胞核二分类的思路实现。放在现在来看，方法比较简单，但是2013年投稿isbi2014的时候算是神经网络在计算病理领域的开创性工作。因此，决定好好理解一下AE，同时也matlab实现一下代码demo。</p>
+<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>自编码器是神经网络的一种，经过<strong>无监督</strong>训练后可以将输入近似复制到输出。具体地，一个自编码器有两个部分：用于特征表示的编码器和用于生成重构的解码器，分别由函数$h = f(x)$和$r = g(h)$表示。其中，隐藏层$h$用来产生编码表示输入数据$^{[1]}$。具体的公式如下：</p>
+<script type="math/tex; mode=display">
+z=h^{(1)}\left(W^{(1)} x+b^{(1)}\right) ~~ \widehat{x}=h^{(2)}\left(W^{(2)} z+b^{(2)}\right)</script><p>事实上，自编码器中，由输入到输出的复制并不太重要，重要的是我们通过这种方式，<strong>能够得到隐藏层$h$对于输入的特征编码</strong>。</p>
+<p>极端来说，如果我们直接让$f()$和$g()$是线性函数，自编码器的输出值就会处处等于输入值，那这个特征编码就没有意义。因此，我们希望通过训练自编码器的输出值近似等于输入值，让隐藏层$h$能够学习到数据的有用特性来表征输入。而这通常需要向自编码器强加一些<strong>约束</strong>，使模型考虑输入的哪个部分需要被优先复制。</p>
+<p>获取有用特征的一种方法是，限制隐藏层$h$的维度小于输入$x$的维度，即让数据有一定的损失后再进行重构恢复，使得自编码器学习数据中重要的特征。这种情况称为<strong>欠完备自编码器（undercomplete）</strong>。一般的，学习过程可以简单描述为最小化一个损失函数$L(x, g(f(x)))$。</p>
+<p>通常地，我们可以直接通过对<strong>损失函数添加正则项</strong>来鼓励模型学习其他特性（如稀疏表示、对噪声的鲁棒性等），而不必一定需要隐藏层$h$的维度小于输入$x$的维度。实际中比较常见的有<strong>去噪自编码器</strong>和<strong>稀疏自编码器</strong>。</p>
+<p>为了学习有用特征，<strong>去噪自编码器</strong>的做法是改变输入数据，引入噪声。它通过对原始数据$x$引入损坏过程$C(|)$得到$\tilde{x}$，再进行$g(f(\tilde{x}))$的变换，最后最小化损失函数$L(x, g(f(\tilde{x})))$的方式实现特征学习。</p>
+<p>而<strong>稀疏自编码器</strong>的做法则是让隐藏层得到的特征更加稀疏 （也就是更多特征值接近0）。通过在损失函数中结合了重构误差$L(x,g(f(x)))$和稀疏正则项$\Omega(f(x))$的方式实现。</p>
+<h5 id="稀疏自编码器中的稀疏正则项"><a href="#稀疏自编码器中的稀疏正则项" class="headerlink" title="稀疏自编码器中的稀疏正则项"></a>稀疏自编码器中的稀疏正则项</h5><p>稀疏正则项是关于一个神经元的平均输出激活值的函数。对于第$i$个神经元，其平均输出激活定义为：</p>
+<script type="math/tex; mode=display">
+\hat{\rho}_{i}=\frac{1}{n} \sum_{j=1}^{n} z_{i}^{(1)}\left(x_{j}\right)=\frac{1}{n} \sum_{j=1}^{n} h^{(1)}\left(w_{i}^{(1) T} x_{j}+b_{i}^{(1)}\right)</script><p>其中$n$是训练样本的数量，$x_j$是第$j$个训练样本，$w_{i}^{(1) T}$是权重矩阵$W^{(1)} $的第$i$行，$b_{i}^{(1)}$是$b^{(1)}$的第$i$个元素。<br>如果输出激活值很高，意味着神经元被“引爆”。而低的输出激活值意味着隐藏层神经元只对应小部分样本“引爆”。通过添加约束，使得$\hat{\rho}_{i}$较低，可以使自编码器学习一种每个神经元只“引爆”一小部分样本的特征表示。也就是说，每一个神经元通过响应一些只存在于一小部分训练样本中的特征来进行专门化。</p>
+<p>而稀疏正则的目的，就是让输出激活值低，也就是约束隐藏层输出使其稀疏。具体做法为，在损失函数中加入正则项，当第$i$个神经元的平均激活值$\hat{\rho}_{i}$和希望的激活值${\rho}$差异很大时，给一个很大的惩罚值，反之，则较小的惩罚。一种惩罚方式是用KL散度度量。</p>
+<script type="math/tex; mode=display">
+\Omega_{\text {Sparsity}}=\sum_{i=1}^{D^{(1)}} K L\left(\rho \| \hat{\rho}_{i}\right)=\sum_{i=1}^{D^{(1)}} \left(\rho \log \left(\frac{\rho}{\hat{\rho}_{i}}\right)+(1-\rho) \log \left(\frac{1-\rho}{1-\hat{\rho}_{i}}\right)\right)</script><p>用KL散度度量平均激活输出$\hat{\rho}_{i}$和期望输出${\rho}$的差异，当两者相同时，KLD为0。<br>这个时候，最小化损失函数不仅意味着最小化重构误差，也在最小化该正则项惩罚，使得$\hat{\rho}_{i}$和${\rho}$差异越来越小。其中，${\rho}$是训练稀疏自编码器时设置的超参数。</p>
+<h5 id="稀疏自编码器中的L2正则项"><a href="#稀疏自编码器中的L2正则项" class="headerlink" title="稀疏自编码器中的L2正则项"></a>稀疏自编码器中的L2正则项</h5><p>然而实际应用中，优化过程很可能出现$w^{(1)}$很大或者$z^{(1)}$很小，导致稀疏正则项很小。因此，通常地，我们会在损失函数中加一个L2权重正则项防止这种情况出现，定义为：</p>
+<script type="math/tex; mode=display">
+\Omega_{\text {weights}}=\frac{1}{2} \sum_{l}^{L} \sum_{j}^{n} \sum_{i}^{k}\left(w_{j i}^{(l)}\right)^{2}</script><p>这里，$L$时隐藏层层数，$n$是样本数量，$k$是训练样本的维度。</p>
+<h5 id="稀疏自编码器的损失函数"><a href="#稀疏自编码器的损失函数" class="headerlink" title="稀疏自编码器的损失函数"></a>稀疏自编码器的损失函数</h5><p>此时，训练一个稀疏自编码器的损失函数是这样的：</p>
+<script type="math/tex; mode=display">E=\underbrace{\frac{1}{N} \sum_{n=1}^{N} \sum_{k=1}^{K}\left(x_{k n}-\hat{x}_{k n}\right)^{2}}_{MSE} + \underbrace{\lambda *\Omega_{weights}}_{L2~Reg} + \underbrace{\beta *\Omega_{sparsity}}_{sparsity~Reg}</script><p>其中，$\lambda$是L2正则项的系数，$\beta$是稀疏正则项的系数。在训练稀疏自编码器时，可以设置。</p>
+<p>以下，我会讲解一个堆叠稀疏自编码器的实现demo。</p>
+<h4 id="代码详解1：载入数据及实例展示"><a href="#代码详解1：载入数据及实例展示" class="headerlink" title="代码详解1：载入数据及实例展示"></a>代码详解1：载入数据及实例展示</h4><p>载入matlab自带手写数字训练及测试数据集，其中image尺寸为28*28大小，以cell形式存储，label以one-hot格式存储。另外，这里随机选取训练数据中的9个实例进行可视化。<br><img src="/download/SSAE/1.png" alt="1"><br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line">clear;</div><div class="line">clc;</div><div class="line"><span class="comment">% loading the digital data with cell-format raw and double label.</span></div><div class="line">load(<span class="string">'digittrain_dataset.mat'</span>);</div><div class="line">load(<span class="string">'digittest_dataset.mat'</span>);</div><div class="line"></div><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% show some examples in training images</span></div><div class="line">shownums = <span class="number">9</span>;</div><div class="line">ind = randperm(<span class="built_in">size</span>(xTrainImages,<span class="number">2</span>), shownums); </div><div class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:shownums</div><div class="line">    subplot(<span class="number">3</span>,<span class="number">3</span>,<span class="built_in">i</span>);</div><div class="line">    imshow(xTrainImages&#123;ind(i)&#125;);</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<h4 id="代码详解2：第一个AE训练及超参数设置"><a href="#代码详解2：第一个AE训练及超参数设置" class="headerlink" title="代码详解2：第一个AE训练及超参数设置"></a>代码详解2：第一个AE训练及超参数设置</h4><p>对于28*28大小的图像数据（直接拉成784维特征），先采用一个稀疏自编码器进行训练用来特征提取。<br>其中，参数设置：隐藏层特征200维，迭代训练500次，L2权重正则化系数0.004，稀疏正则系数4，稀疏值0.15。<br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% define the hype-parameters</span></div><div class="line">feat1nums = <span class="number">200</span>;</div><div class="line">maxepoch1 = <span class="number">500</span>;</div><div class="line">reg1 = <span class="number">0.004</span>;</div><div class="line">sparsityReg1 = <span class="number">0.4</span>;</div><div class="line">sparsityVal1 = <span class="number">0.15</span>;</div><div class="line"></div><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% training the Autoencoder</span></div><div class="line">autoenc1 = trainAutoencoder(xTrainImages, feat1nums, <span class="string">'MaxEpochs'</span>, maxepoch1,...</div><div class="line">    <span class="string">'L2WeightRegularization'</span>, reg1, <span class="string">'SparsityRegularization'</span>, sparsityReg1, ...</div><div class="line">    <span class="string">'SparsityProportion'</span>, sparsityVal1, <span class="string">'ScaleData'</span>, false);</div><div class="line">save(<span class="string">'SSAEe1'</span>, <span class="string">'autoenc1'</span>)</div><div class="line"><span class="built_in">disp</span>(<span class="string">'Finished autoenc1!'</span>)</div></pre></td></tr></table></figure></p>
+<p>matlab的toolbox做得很好，训练过程可视化很清晰。包括自编码器网络可视化、进程以及实时performance。<br><img src="/download/SSAE/4.png" alt="3"><br>训练完成后，得到自编码器模型$autoenc1$。</p>
+<h4 id="代码详解3：模型参数可视化和重构结果展示"><a href="#代码详解3：模型参数可视化和重构结果展示" class="headerlink" title="代码详解3：模型参数可视化和重构结果展示"></a>代码详解3：模型参数可视化和重构结果展示</h4><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% show the weights</span></div><div class="line">close all;</div><div class="line">plotWeights(autoenc1);</div><div class="line"></div><div class="line"><span class="comment">% reconstruct the images</span></div><div class="line">reconstruct = predict(autoenc1, xTestImages);</div><div class="line">ind = randperm(<span class="built_in">size</span>(reconstruct,<span class="number">2</span>), <span class="number">1</span>); </div><div class="line">imshowpair(reconstruct&#123;ind&#125;, xTestImages&#123;ind&#125;,<span class="string">'montage'</span>)</div></pre></td></tr></table></figure>
+<p>对于训练好的模型，我们可以采用<code>plotWeights</code>对模型中的编码器进行权重可视化。<br><img src="/download/SSAE/2.png" alt="4"><br>同样，为了直观查看自编码模型的好坏，我们可以将该模型应用于测试集<code>predict</code>得到所有图像对应的重构输出，然后show出来进行定性评估。<br><img src="/download/SSAE/9.png" alt="5"></p>
+<h4 id="代码详解4：特征提取"><a href="#代码详解4：特征提取" class="headerlink" title="代码详解4：特征提取"></a>代码详解4：特征提取</h4><p>尽管直观来看，我们经过一次的重构结果已经不错，但是对于SSAE来说，我们希望有多个堆叠的自编码器进行特征提取。也就是说，第一个自编码器模型的解码器部分只是用来训练重构误差，而编码器部分才是用来对输入进行特征提取的关键。我们将第一个自编码器的编码部分<code>encode</code>拿出来对训练集数据进行特征提取，然后将提取的特征用于后续第二个自编码器的输入。<br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% extract the features of training data, based on one autoencoder</span></div><div class="line">feat1 = encode(autoenc1, xTrainImages);</div></pre></td></tr></table></figure></p>
+<h4 id="代码详解5：第二个AE训练及超参数设置"><a href="#代码详解5：第二个AE训练及超参数设置" class="headerlink" title="代码详解5：第二个AE训练及超参数设置"></a>代码详解5：第二个AE训练及超参数设置</h4><p>对于$autoenc1$提取到的200维的特征$feat1$，采用第二个稀疏自编码器进行训练用来进一步地特征提取。<br>其中，参数设置：隐藏层特征100维，迭代训练500次，L2权重正则化系数0.002，稀疏正则系数0.4，稀疏值0.1。<br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% define the hype-parameters of autoencoder 2 </span></div><div class="line">feat2nums = <span class="number">100</span>;</div><div class="line">maxepoch2 = <span class="number">500</span>;</div><div class="line">reg2 = <span class="number">0.002</span>;</div><div class="line">sparsityReg2 = <span class="number">0.4</span>;</div><div class="line">sparsityVal2 = <span class="number">0.1</span>;</div><div class="line"></div><div class="line">autoenc2 = trainAutoencoder(feat1, feat2nums, <span class="string">'MaxEpochs'</span>, maxepoch2,...</div><div class="line">    <span class="string">'L2WeightRegularization'</span>, reg2, <span class="string">'SparsityRegularization'</span>, sparsityReg2,...</div><div class="line">    <span class="string">'SparsityProportion'</span>, sparsityVal2, <span class="string">'ScaleData'</span>, false);</div><div class="line">save(<span class="string">'SSAEe2'</span>, <span class="string">'autoenc2'</span>)</div><div class="line"><span class="built_in">disp</span>(<span class="string">'Finished autoenc2!'</span>)</div></pre></td></tr></table></figure></p>
+<p>AE训练过程可视化如图所示:<br><img src="/download/SSAE/6.png" alt="7"></p>
+<h4 id="代码详解6：特征提取及分类器训练"><a href="#代码详解6：特征提取及分类器训练" class="headerlink" title="代码详解6：特征提取及分类器训练"></a>代码详解6：特征提取及分类器训练</h4><p>训练完成后，得到第二个自编码器模型$autoenc2$。此时我们将第二个自编码器的编码部分<code>encode</code>拿出来再次对$feat1$进行特征提取得到$feat2$。此时的$feat2$即代表了我们用堆叠自编码器提取到的图像的特征。也就是说，每一张28*28大小的图像被100维特征表示。<br>此时我们可以用<code>trainsoftmaxLayer</code>分类器进行有监督地训练。得到分类器模型$softmax$。<br>softmax训练过程可视化如图所示：<br><img src="/download/SSAE/7.png" alt="8"></p>
+<figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% extract the features of training data, based on one autoencoder</span></div><div class="line">feat2 = encode(autoenc2, feat1);</div><div class="line"></div><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% training the softmax classifier based on the feat1 of autoencoder</span></div><div class="line">softmax = trainSoftmaxLayer(feat2, tTrain, <span class="string">'MaxEpochs'</span>, <span class="number">1000</span>);</div><div class="line">save(<span class="string">'SSAEsoftmax'</span>, <span class="string">'softmax'</span>)</div><div class="line"><span class="built_in">disp</span>(<span class="string">'Finshed softmax!'</span>)</div></pre></td></tr></table></figure>
+<h4 id="代码详解7：样本测试及定量评估"><a href="#代码详解7：样本测试及定量评估" class="headerlink" title="代码详解7：样本测试及定量评估"></a>代码详解7：样本测试及定量评估</h4><p>得到分类器模型，我们可以进行测试样本的评估。先对测试图像应用$autoenc1$提取200维特征，然后$autoenc2$对这200维特征提取100维特征$testfeats2$并送入$softmax$分类器得到样本的预测结果$pred$（以softmax概率形式）。<br>可以用matlab内置的<code>plotconfusion</code>函数直接得到混淆矩阵，如图。<br><img src="/download/SSAE/3.png" alt="9"></p>
+<figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%%</span></div><div class="line"><span class="comment">% predict the testing data</span></div><div class="line">testfeats = encode(autoenc1, xTestImages);</div><div class="line">testfeats2 = encode(autoenc2, testfeats);</div><div class="line">pred = softmax(testfeats2);</div><div class="line">plotconfusion(tTest, pred);</div></pre></td></tr></table></figure>
+<h4 id="代码详解8：可视化整个网络结构"><a href="#代码详解8：可视化整个网络结构" class="headerlink" title="代码详解8：可视化整个网络结构"></a>代码详解8：可视化整个网络结构</h4><p>整个SSAE的过程大致如此。为了直观理解我们整个过程用了哪些网络结构，我们还可以将所有的模型结构<code>stack</code>起来<code>view</code>：<br><img src="/download/SSAE/8.png" alt="10"><br><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">% show the autoencoder structure</span></div><div class="line">net = stack(autoenc1, autoenc2, softmax);</div><div class="line">view(net);</div></pre></td></tr></table></figure></p>
+<h4 id="代码总结"><a href="#代码总结" class="headerlink" title="代码总结"></a>代码总结</h4><p>SSAE的代码就是这样，比较简单，而且matlab的toolbox集成相当好，整个过程很直观。当然，该demo也还有很多可以自行开发的地方：</p>
+<ul>
+<li><strong>数据</strong>：这里只是展示SSAE应用到matlab自带手写数字集上的demo，完全可以迁移到自己的数据集上进行分类应用。具体的数据制作方法，可以见下面的<strong>附录function：数据生成</strong>;</li>
+<li><strong>特征提取</strong>： 稀疏自编码器（SAE）的本质是无监督提取特征，因此可以更换其他特征提取方法或者其他自编码器（）；</li>
+<li><strong>分类器</strong>：softmax分类器其实是一种神经网络方法。这里的分类器和SSAE部分是相互独立的。可以换成其他分类器，如SVM，LDA等等。乃至换成无监督聚类也未尝不可。</li>
+</ul>
+<h4 id="附录function：-数据生成"><a href="#附录function：-数据生成" class="headerlink" title="附录function： 数据生成"></a>附录function： 数据生成</h4><figure class="highlight matlab"><table><tr><td class="code"><pre><div class="line"><span class="comment">%% generate the data for SSAE input on image folder</span></div><div class="line"><span class="comment">% input: PATH of multi class samples. eg. '../data/test/'</span></div><div class="line"><span class="comment">% input: format is 'png' or 'jpg' or 'bmp' format of images you want to index</span></div><div class="line"><span class="comment">% input: shuffle or not , false or true</span></div><div class="line"><span class="comment">% input: saveFLAG or not, false or true</span></div><div class="line"></div><div class="line"><span class="comment">% output: genData and genLabel (one-hot format)</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="params">[genImg, genLabel]</span> = <span class="title">genData</span><span class="params">(PATH, format, shuffle, saveFLAG)</span></span></div><div class="line"><span class="comment">%     PATH = 'E:\Projects\ISBIcomparison\data\test\';</span></div><div class="line"><span class="comment">%     format = 'png';</span></div><div class="line">    D = dir(PATH);</div><div class="line">    directories = &#123;D.name&#125;;</div><div class="line">    <span class="built_in">disp</span>([<span class="string">'There are **'</span>, num2str(length(directories)<span class="number">-2</span>), ...</div><div class="line">    <span class="string">'** dirs under this folder: '</span>, PATH]);</div><div class="line">    </div><div class="line">    allImg = &#123;&#125;;</div><div class="line">    allLabel = [];</div><div class="line">    <span class="keyword">for</span> d = <span class="number">3</span>:<span class="built_in">length</span>(directories) <span class="comment">% 1 and 2 is '.' and '..'</span></div><div class="line">        subdir = fullfile(PATH, directories&#123;d&#125;);      </div><div class="line">        lists = dir(fullfile(subdir, [<span class="string">'*'</span>, format]));</div><div class="line">        subdirnames = &#123;lists.name&#125;;</div><div class="line">        nums = <span class="built_in">length</span>(subdirnames);</div><div class="line">        </div><div class="line">        <span class="built_in">disp</span>([<span class="string">'Indexing files of '</span>, subdir, <span class="string">' ... '</span>]);</div><div class="line">        <span class="built_in">disp</span>([format, <span class="string">' files: '</span>, num2str(nums)]);</div><div class="line">        </div><div class="line">        <span class="comment">% loop for all images in each subdir, saved in allData</span></div><div class="line">        <span class="keyword">for</span> ind = <span class="number">1</span>:nums</div><div class="line">            imgName = fullfile(subdir, subdirnames&#123;ind&#125;);</div><div class="line"><span class="comment">%             disp(['Now is processing **', imgName, '**']);</span></div><div class="line">            img = imread(imgName);</div><div class="line"><span class="comment">%             img = imresize(img, 0.5);</span></div><div class="line">            allImg = <span class="built_in">cat</span>(<span class="number">2</span>, allImg, double(img)/<span class="number">255</span>); <span class="comment">% [1,255] convert to [0,1]</span></div><div class="line">            allLabel = <span class="built_in">cat</span>(<span class="number">2</span>, allLabel, d<span class="number">-2</span>);</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    matrix = <span class="built_in">eye</span>(max(allLabel)); <span class="comment">% get the identity matrix</span></div><div class="line">    label_OneHot = matrix(:,allLabel); <span class="comment">% label numbers to one-hot</span></div><div class="line">    <span class="built_in">disp</span>(<span class="string">'Finish generating!'</span>);</div><div class="line">    </div><div class="line">    genImg = allImg;</div><div class="line">    genLabel = label_OneHot;</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> shuffle</div><div class="line">        randomlist = randperm(<span class="built_in">numel</span>(genImg));</div><div class="line">        genImg = genImg(:,randomlist);</div><div class="line">        genLabel = genLabel(:, randomlist);</div><div class="line">    <span class="keyword">end</span></div><div class="line">    </div><div class="line">    <span class="keyword">if</span> saveFLAG</div><div class="line">        save(<span class="string">'save_from_genData.mat'</span>, <span class="string">'genImg'</span>, <span class="string">'genLabel'</span>);</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p>[1] <a href="http://www.deeplearningbook.org/contents/autoencoders.html" target="_blank" rel="external">深度学习 自编码器章节Ian Goodfellow</a><br>[2] <a href="https://zhuanlan.zhihu.com/p/34238979" target="_blank" rel="external">自编码器是什么？</a><br>[3] <a href="https://www.zhihu.com/question/41490383" target="_blank" rel="external">为什么稀疏自编码器很少见到多层的？</a><br>[4] <a href="https://ww2.mathworks.cn/help/deeplearning/ref/trainautoencoder.html?s_tid=doc_ta" target="_blank" rel="external">Matlab中的trainAutoencoder</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/21/VPS的ubuntu上搭建v2ray服务端及客户端配置教程/" rel="next" title="VPS的ubuntu上搭建v2ray服务端及客户端配置教程">
+                <i class="fa fa-chevron-left"></i> VPS的ubuntu上搭建v2ray服务端及客户端配置教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/25/pytorch的反向传播及求导机制相关/" rel="prev" title="pytorch的反向传播及求导机制相关">
+                pytorch的反向传播及求导机制相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Chaoyang" />
+          <p class="site-author-name" itemprop="name">Chaoyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Think, record.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/gatsby2016" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:gatsby2015@163.com" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  Mail
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://jwxie.cn/" title="Jiawei" target="_blank">Jiawei</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://darlewo.cn/" title="Zengrui" target="_blank">Zengrui</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://sxwenny.github.io/" title="Xiaowen" target="_blank">Xiaowen</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hanin97.cn/" title="Jineng" target="_blank">Jineng</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#写在前面"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#稀疏自编码器中的稀疏正则项"><span class="nav-number">2.1.</span> <span class="nav-text">稀疏自编码器中的稀疏正则项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#稀疏自编码器中的L2正则项"><span class="nav-number">2.2.</span> <span class="nav-text">稀疏自编码器中的L2正则项</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#稀疏自编码器的损失函数"><span class="nav-number">2.3.</span> <span class="nav-text">稀疏自编码器的损失函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解1：载入数据及实例展示"><span class="nav-number">3.</span> <span class="nav-text">代码详解1：载入数据及实例展示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解2：第一个AE训练及超参数设置"><span class="nav-number">4.</span> <span class="nav-text">代码详解2：第一个AE训练及超参数设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解3：模型参数可视化和重构结果展示"><span class="nav-number">5.</span> <span class="nav-text">代码详解3：模型参数可视化和重构结果展示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解4：特征提取"><span class="nav-number">6.</span> <span class="nav-text">代码详解4：特征提取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解5：第二个AE训练及超参数设置"><span class="nav-number">7.</span> <span class="nav-text">代码详解5：第二个AE训练及超参数设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解6：特征提取及分类器训练"><span class="nav-number">8.</span> <span class="nav-text">代码详解6：特征提取及分类器训练</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解7：样本测试及定量评估"><span class="nav-number">9.</span> <span class="nav-text">代码详解7：样本测试及定量评估</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码详解8：可视化整个网络结构"><span class="nav-number">10.</span> <span class="nav-text">代码详解8：可视化整个网络结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码总结"><span class="nav-number">11.</span> <span class="nav-text">代码总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#附录function：-数据生成"><span class="nav-number">12.</span> <span class="nav-text">附录function： 数据生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">13.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<span id="busuanzi_value_site_uv"></span> visitors 
+viewed <span id="busuanzi_value_site_pv"></span> times.
+</div>
+
+
+<div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+<!--   <span class="author" itemprop="copyrightHolder">Chaoyang</span>  //这里是作者信息改为了orcid，如下 -->
+
+<a href="https://beian.miit.gov.cn" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;">浙ICP备2021036169号-1</a>
+</div>
+
+
+
+
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+</body>
+</html>
